@@ -8,7 +8,7 @@ const CARDS_PER_ROW = {
     sm: 2,
     md: 3,
     lg: 4,
-    xl: 4,
+    xl: 5,
 };
 const CARD_WIDTH_CLASSES = 'w-full max-w-72';
 
@@ -16,7 +16,7 @@ const PokemonList = () => {
     const {data: allPokemon, isLoading, isError, error} = usePokemonList();
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [, setRenderTrigger] = useState(0);
+    const [_, setRenderTrigger] = useState(0);
 
     const filteredPokemon = allPokemon?.filter(pokemon =>
         pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
