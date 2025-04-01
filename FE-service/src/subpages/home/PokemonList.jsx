@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import usePokemonList from '../../hooks/usePokemonList';
 import SearchBar from '../../shared/SearchBar';
 
 const POKEMONS_PER_PAGE = 15;
 
 const PokemonList = () => {
-    const {data: allPokemon, isLoading, isError, error} = usePokemonList();
+    const { data: allPokemon, isLoading, isError, error } = usePokemonList();
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -21,23 +21,11 @@ const PokemonList = () => {
     };
 
     const goToNextPage = () => {
-        setCurrentPage(prevPage => {
-            if (prevPage < totalPages) {
-                return prevPage + 1;
-            } else {
-                return 1;
-            }
-        });
+        setCurrentPage(prevPage => (prevPage < totalPages ? prevPage + 1 : 1));
     };
 
     const goToPreviousPage = () => {
-        setCurrentPage(prevPage => {
-            if (prevPage > 1) {
-                return prevPage - 1;
-            } else {
-                return totalPages > 0 ? totalPages : 1;
-            }
-        });
+        setCurrentPage(prevPage => (prevPage > 1 ? prevPage - 1 : totalPages > 0 ? totalPages : 1));
     };
 
     const startIndex = (currentPage - 1) * POKEMONS_PER_PAGE;
@@ -54,7 +42,7 @@ const PokemonList = () => {
 
     return (
         <div>
-            <SearchBar onSearch={handleSearch}/>
+            <SearchBar onSearch={handleSearch} />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                 {currentPokemonPage.map(pokemon => (
                     <div key={pokemon.id}
@@ -69,20 +57,21 @@ const PokemonList = () => {
                             <div>HP: {pokemon.stats?.hp}</div>
                             <div>Atak: {pokemon.stats?.attack}</div>
                         </div>
+                        {/* W przyszłości dodamy Ability */}
                     </div>
                 ))}
             </div>
-            <div className="flex justify-center mt-4">
-                <button onClick={goToPreviousPage}
-                        className="px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    Poprzednia
-                </button>
-                <span>Strona {currentPage} / {totalPages > 0 ? totalPages : 1}</span>
-                <button onClick={goToNextPage}
-                        className="px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    Następna
-                </button>
-            </div>
+            {totalPages > 1 && (
+                <div className="flex justify-center mt-4">
+                    <button onClick={goToPreviousPage} className="px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        Poprzednia
+                    </button>
+                    <span>Strona {currentPage} / {totalPages > 0 ? totalPages : 1}</span>
+                    <button onClick={goToNextPage} className="px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        Następna
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
