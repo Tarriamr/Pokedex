@@ -1,13 +1,30 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import clsx from 'clsx';
+
+const buttonBaseStyle = "px-4 py-2 rounded font-semibold text-white shadow transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-opacity-50";
 
 const AuthNav = () => {
     return (
-        <div>
-            <Link to="/login"
-                  className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2">Logowanie</Link>
-            <Link to="/register"
-                  className="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded">Rejestracja</Link>
+        <div className="flex space-x-3">
+            <Link
+                to="/login"
+                className={clsx(
+                    buttonBaseStyle,
+                    "bg-pokemon-blue hover:bg-pokemon-blue-dark focus:ring-pokemon-blue"
+                )}
+            >
+                Logowanie
+            </Link>
+            <Link
+                to="/register"
+                className={clsx(
+                    buttonBaseStyle,
+                    "bg-pokemon-green hover:bg-pokemon-green-dark focus:ring-pokemon-green"
+                )}
+            >
+                Rejestracja
+            </Link>
         </div>
     );
 };

@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import clsx from 'clsx'; // Import clsx
 import usePokemonList from '../../hooks/usePokemonList';
 import SearchBar from '../../shared/SearchBar';
-import PokemonDetailsModal from '../../components/PokemonDetailsModal'; // Import nowego komponentu
+import PokemonDetailsModal from '../../components/PokemonDetailsModal/PokemonDetailsModal.jsx';
+import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/solid'; // Import ikon
 
 const POKEMON_LIMIT = 150;
 const POKEMONS_PER_PAGE = 15;
@@ -12,40 +14,45 @@ const CARDS_PER_ROW = {
     lg: 4,
     xl: 5,
 };
-const CARD_WIDTH_CLASSES = 'w-full max-w-72';
+// Usunięto CARD_WIDTH_CLASSES, szerokość będzie zarządzana przez flex/grid
 
 const PokemonList = () => {
-    const { data: allPokemon, isLoading, isError, error } = usePokemonList(POKEMON_LIMIT);
+    const {data: allPokemon, isLoading, isError, error} = usePokemonList(POKEMON_LIMIT);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedPokemonId, setSelectedPokemonId] = useState(null); // Stan dla ID wybranego Pokemona
-    const [isModalOpen, setIsModalOpen] = useState(false); // Stan widoczności modala
-    const [_, setRenderTrigger] = useState(0);
+    const [selectedPokemonId, setSelectedPokemonId] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [_, setRenderTrigger] = useState(0); // Do re-renderowania przy resize
 
     const filteredPokemon = allPokemon?.filter(pokemon =>
         pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
-    const totalPages = Math.ceil(filteredPokemon.length / POKEMONS_PER_PAGE);
+    // Total pages calculation ensures it's at least 1 if there are any pokemon
+    const totalPages = Math.max(1, Math.ceil(filteredPokemon.length / POKEMONS_PER_PAGE));
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        setCurrentPage(1);
+        setCurrentPage(1); // Resetuj stronę przy nowym wyszukiwaniu
     };
 
+    // --- Zmieniona logika paginacji ---
     const goToNextPage = () => {
-        setCurrentPage(prevPage => (prevPage < totalPages ? prevPage + 1 : 1));
+        setCurrentPage(prevPage => (prevPage === totalPages ? 1 : prevPage + 1));
     };
 
     const goToPreviousPage = () => {
-        setCurrentPage(prevPage => (prevPage > 1 ? prevPage - 1 : totalPages > 0 ? totalPages : 1));
+        setCurrentPage(prevPage => (prevPage === 1 ? totalPages : prevPage - 1));
     };
+    // --- Koniec zmian w logice paginacji ---
 
     const startIndex = (currentPage - 1) * POKEMONS_PER_PAGE;
     const endIndex = startIndex + POKEMONS_PER_PAGE;
     const currentPokemonPage = filteredPokemon.slice(startIndex, endIndex);
 
+    // Responsywność - bez zmian w logice
     const getCurrentBreakpoint = useCallback(() => {
+        // ... (bez zmian)
         const width = window.innerWidth;
         if (width < 640) return 'xs';
         if (width < 768) return 'sm';
@@ -55,6 +62,7 @@ const PokemonList = () => {
     }, []);
 
     const getRows = useCallback(() => {
+        // ... (bez zmian)
         const rows = [];
         const breakpoint = getCurrentBreakpoint();
         const cardsPerRow = CARDS_PER_ROW[breakpoint] || 4;
@@ -65,6 +73,7 @@ const PokemonList = () => {
     }, [currentPokemonPage, getCurrentBreakpoint]);
 
     useEffect(() => {
+        // ... (bez zmian)
         const handleResize = () => {
             setRenderTrigger(prev => prev + 1);
         };
@@ -84,58 +93,83 @@ const PokemonList = () => {
     };
 
     if (isLoading) {
-        return <div>Ładowanie Pokemonów...</div>;
+        return <div className="text-center p-10 text-xl text-pokemon-blue-dark">Ładowanie Pokemonów...</div>;
     }
 
     if (isError) {
-        return <div>Wystąpił błąd podczas pobierania Pokemonów: {error?.message || 'Wystąpił nieznany błąd.'}</div>;
+        return <div className="text-center p-10 text-xl text-pokemon-red-dark">Wystąpił błąd podczas pobierania
+            Pokemonów: {error?.message || 'Wystąpił nieznany błąd.'}</div>;
     }
 
     return (
-        <div>
-            <SearchBar onSearch={handleSearch} />
-            <div>
-                {getRows().map((row, index) => (
-                    <div key={index} className="flex justify-center gap-4 mt-4">
-                        {row.map(pokemon => (
-                            <div key={pokemon.id}
-                                 className={`bg-white rounded-md shadow-md p-4 ${CARD_WIDTH_CLASSES} hover:scale-105 transition-transform cursor-pointer`}
-                                 onClick={() => openModal(pokemon.id)} // Otwieranie modala po kliknięciu
-                            >
-                                <img src={pokemon.image} alt={pokemon.name}
-                                     className="w-full h-32 object-contain mb-2" />
-                                <h2 className="text-lg font-semibold text-center capitalize">{pokemon.name}</h2>
-                                <div className="text-sm text-gray-600">
-                                    <p><strong>Wzrost:</strong> {pokemon.height} m</p>
-                                    <p><strong>Waga:</strong> {pokemon.weight} kg</p>
-                                    <p><strong>Doświadczenie:</strong> {pokemon.base_experience}</p>
-                                    {pokemon.abilities && pokemon.abilities.length > 0 && (
-                                        <p><strong>Umiejętność:</strong> {pokemon.abilities[0].ability.name}</p>
-                                    )}
-                                </div>
-                                {/* Usunięto poprzednie wyświetlanie HP i Ataku */}
+        <div className="p-4">
+            <SearchBar onSearch={handleSearch}/>
+
+            {/* Grid dla kart Pokemonów */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
+                {currentPokemonPage.length > 0 ? (
+                    currentPokemonPage.map(pokemon => (
+                        <div
+                            key={pokemon.id}
+                            className={clsx(
+                                "bg-white rounded-lg shadow-md p-4 transition-transform duration-200 ease-in-out cursor-pointer",
+                                "border border-pokemon-gray-medium hover:border-pokemon-red hover:shadow-lg hover:scale-105",
+                                "flex flex-col items-center text-center" // Wycentrowanie zawartości
+                            )}
+                            onClick={() => openModal(pokemon.id)}
+                        >
+                            <img
+                                src={pokemon.image || './src/assets/pokeball.svg'} // Fallback image
+                                alt={pokemon.name}
+                                className="w-32 h-32 object-contain mb-3"
+                                loading="lazy" // Lazy loading dla obrazków
+                            />
+                            <h2 className="text-lg font-semibold text-pokemon-gray-darker capitalize mb-2">{pokemon.name}</h2>
+                            {/* Usunięto poprzednie szczegóły, są teraz w modalu */}
+                            <div className="text-xs text-pokemon-gray-dark mt-1 w-full grid grid-cols-2 gap-x-2">
+                                {/* Dodano podstawowe staty z powrotem zgodnie z obrazkiem [Image 3] */}
+                                <p><strong>Height:</strong> {pokemon.height}</p>
+                                <p><strong>Exp:</strong> {pokemon.base_experience}</p>
+                                <p><strong>Weight:</strong> {pokemon.weight}</p>
+                                <p><strong>Ability:</strong> {pokemon.abilities?.[0]?.ability?.name || 'N/A'}</p>
                             </div>
-                        ))}
-                    </div>
-                ))}
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-pokemon-gray-dark col-span-full text-center mt-6">Nie znaleziono Pokemonów
+                        pasujących do wyszukiwania.</p>
+                )}
             </div>
-            {totalPages > 1 && (
-                <div className="flex justify-center mt-4">
-                    <button onClick={goToPreviousPage}
-                            className="px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        Poprzednia
+
+
+            {/* --- Zmieniona Paginacja --- */}
+            {totalPages > 1 && ( // Ukryj, jeśli jest tylko jedna strona
+                <div className="flex justify-center items-center mt-8 space-x-4">
+                    <button
+                        onClick={goToPreviousPage}
+                        className="p-2 rounded-full bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-gray-darker shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50"
+                        aria-label="Poprzednia strona"
+                    >
+                        <ChevronLeftIcon className="h-6 w-6"/>
                     </button>
-                    <span>Strona {currentPage} / {totalPages > 0 ? totalPages : 1}</span>
-                    <button onClick={goToNextPage}
-                            className="px-4 py-2 mx-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        Następna
+                    <span className="text-lg font-medium text-pokemon-gray-darker">
+                        {currentPage} / {totalPages}
+                    </span>
+                    <button
+                        onClick={goToNextPage}
+                        className="p-2 rounded-full bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-gray-darker shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50"
+                        aria-label="Następna strona"
+                    >
+                        <ChevronRightIcon className="h-6 w-6"/>
                     </button>
                 </div>
             )}
+            {/* --- Koniec zmian w Paginacji --- */}
+
 
             {/* Renderowanie komponentu modala */}
             {isModalOpen && (
-                <PokemonDetailsModal pokemonId={selectedPokemonId} onClose={closeModal} />
+                <PokemonDetailsModal pokemonId={selectedPokemonId} onClose={closeModal}/>
             )}
         </div>
     );
