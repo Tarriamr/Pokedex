@@ -1,7 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import usePokemonList from '../../hooks/usePokemonList';
 import SearchBar from '../../shared/SearchBar';
+import PokemonDetailsModal from '../../components/PokemonDetailsModal'; // Import nowego komponentu
 
+const POKEMON_LIMIT = 150;
 const POKEMONS_PER_PAGE = 15;
 const CARDS_PER_ROW = {
     xs: 1,
@@ -13,9 +15,11 @@ const CARDS_PER_ROW = {
 const CARD_WIDTH_CLASSES = 'w-full max-w-72';
 
 const PokemonList = () => {
-    const {data: allPokemon, isLoading, isError, error} = usePokemonList();
+    const { data: allPokemon, isLoading, isError, error } = usePokemonList(POKEMON_LIMIT);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedPokemonId, setSelectedPokemonId] = useState(null); // Stan dla ID wybranego Pokemona
+    const [isModalOpen, setIsModalOpen] = useState(false); // Stan widoczności modala
     const [_, setRenderTrigger] = useState(0);
 
     const filteredPokemon = allPokemon?.filter(pokemon =>
@@ -69,6 +73,16 @@ const PokemonList = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    const openModal = (id) => {
+        setSelectedPokemonId(id);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setSelectedPokemonId(null);
+        setIsModalOpen(false);
+    };
+
     if (isLoading) {
         return <div>Ładowanie Pokemonów...</div>;
     }
@@ -79,25 +93,27 @@ const PokemonList = () => {
 
     return (
         <div>
-            <SearchBar onSearch={handleSearch}/>
+            <SearchBar onSearch={handleSearch} />
             <div>
                 {getRows().map((row, index) => (
                     <div key={index} className="flex justify-center gap-4 mt-4">
                         {row.map(pokemon => (
                             <div key={pokemon.id}
-                                 className={`bg-white rounded-md shadow-md p-4 ${CARD_WIDTH_CLASSES} hover:scale-105 transition-transform cursor-pointer`}>
+                                 className={`bg-white rounded-md shadow-md p-4 ${CARD_WIDTH_CLASSES} hover:scale-105 transition-transform cursor-pointer`}
+                                 onClick={() => openModal(pokemon.id)} // Otwieranie modala po kliknięciu
+                            >
                                 <img src={pokemon.image} alt={pokemon.name}
-                                     className="w-full h-32 object-contain mb-2"/>
-                                <h2 className="text-lg font-semibold text-center">{pokemon.name}</h2>
-                                <div className="flex justify-between text-sm text-gray-600">
-                                    <div>Wzrost: {pokemon.height}</div>
-                                    <div>Waga: {pokemon.weight}</div>
+                                     className="w-full h-32 object-contain mb-2" />
+                                <h2 className="text-lg font-semibold text-center capitalize">{pokemon.name}</h2>
+                                <div className="text-sm text-gray-600">
+                                    <p><strong>Wzrost:</strong> {pokemon.height} m</p>
+                                    <p><strong>Waga:</strong> {pokemon.weight} kg</p>
+                                    <p><strong>Doświadczenie:</strong> {pokemon.base_experience}</p>
+                                    {pokemon.abilities && pokemon.abilities.length > 0 && (
+                                        <p><strong>Umiejętność:</strong> {pokemon.abilities[0].ability.name}</p>
+                                    )}
                                 </div>
-                                <div className="flex justify-between text-sm text-gray-600">
-                                    <div>HP: {pokemon.stats?.hp}</div>
-                                    <div>Atak: {pokemon.stats?.attack}</div>
-                                </div>
-                                {/* W przyszłości dodamy Ability */}
+                                {/* Usunięto poprzednie wyświetlanie HP i Ataku */}
                             </div>
                         ))}
                     </div>
@@ -115,6 +131,11 @@ const PokemonList = () => {
                         Następna
                     </button>
                 </div>
+            )}
+
+            {/* Renderowanie komponentu modala */}
+            {isModalOpen && (
+                <PokemonDetailsModal pokemonId={selectedPokemonId} onClose={closeModal} />
             )}
         </div>
     );
