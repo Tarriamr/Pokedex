@@ -1,66 +1,60 @@
 import React from 'react';
-import {BrowserRouter as Router, Link, Route, Routes} from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom'; // Usunięto nieużywany import Link
+import clsx from 'clsx';
 import PokemonList from './subpages/home/PokemonList';
 import AuthNav from './components/Navigation/AuthNav';
 import MainNav from './components/Navigation/MainNav';
-// Import nowych stron
 import Login from './subpages/login/Login';
 import Register from './subpages/register/Register';
-
-// Prosty komponent dla logo
-const Logo = () => (
-    <Link to="/" className="text-3xl font-bold text-pokemon-yellow tracking-wider"
-          style={{textShadow: '2px 2px 4px rgba(41, 182, 246, 0.7)'}}>
-        PokéMoN
-    </Link>
-);
-
+import { useTheme } from "./context/ThemeContext.jsx";
+import Logo from './components/Logo/Logo.jsx';
+import ThemeToggleButton from './components/ThemeToggleButton/ThemeToggleButton.jsx'; // <<-- IMPORT Przycisku
 
 const App = () => {
-    // Tutaj w przyszłości będzie logika sprawdzania, czy użytkownik jest zalogowany
-    const isLoggedIn = false; // Załóżmy na razie, że użytkownik nie jest zalogowany
+    const isLoggedIn = false;
+    const { theme } = useTheme();
 
     return (
-        <Router>
-            {/* Wrapper dla całej aplikacji z tłem */}
-            <div className="bg-pokemon-gray-light min-h-screen flex flex-col">
+        <div className={clsx(
+            "min-h-screen flex flex-col",
+            "transition-colors duration-300 ease-in-out",
+            "bg-pokemon-neutral-sand dark:bg-pokemon-gray-darker",
+            "text-pokemon-gray-darker dark:text-pokemon-gray-light"
+        )}>
 
-                {/* Nagłówek */}
-                <header className="bg-pokemon-red shadow-md sticky top-0 z-40">
-                    <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
-                        {/* Lewa strona - Logo */}
-                        <Logo/>
+            <header className={clsx(
+                "shadow-md sticky top-0 z-40",
+                "transition-colors duration-300 ease-in-out",
+                "bg-pokemon-red dark:bg-pokemon-red-dark"
+            )}>
+                <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
+                    <Logo />
+                    <div className="flex items-center space-x-4">
+                        {isLoggedIn ? <MainNav /> : <AuthNav />}
+                        {/* DODANO Przycisk przełączania motywu */}
+                        <ThemeToggleButton />
+                    </div>
+                </nav>
+            </header>
 
-                        {/* Prawa strona - Nawigacja */}
-                        <div className="flex items-center space-x-4">
-                            {/* Tutaj będzie logika warunkowego renderowania nawigacji */}
-                            {isLoggedIn ? <MainNav/> : <AuthNav/>}
-                            {/* Można dodać ikonę użytkownika i przełącznik theme później [source: 106] */}
-                        </div>
-                    </nav>
-                </header>
+            <main className="container mx-auto p-4 flex-grow">
+                <Routes>
+                    <Route path="/" element={<PokemonList />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    {/* <Route path="/favourites" element={<div>Strona Ulubionych (TODO)</div>} /> */}
+                </Routes>
+            </main>
 
-                {/* Główna treść strony */}
-                <main className="container mx-auto p-4 flex-grow">
-                    <Routes>
-                        <Route path="/" element={<PokemonList/>}/>
-                        {/* --- Nowe trasy --- */}
-                        <Route path="/login" element={<Login/>}/>
-                        <Route path="/register" element={<Register/>}/>
-                        {/* --- Koniec nowych tras --- */}
-
-                        {/* Dodaj inne route'y później (Ulubione, Arena, etc.) */}
-                        {/* Przykład dla strony, która jeszcze nie istnieje */}
-                        {/* <Route path="/favourites" element={<div>Strona Ulubionych (TODO)</div>} /> */}
-                    </Routes>
-                </main>
-
-                {/* Stopka (opcjonalnie) */}
-                <footer className="bg-pokemon-blue text-white text-center p-3 mt-auto text-sm">
-                    Pokedex Project &copy; {new Date().getFullYear()}
-                </footer>
-            </div>
-        </Router>
+            <footer className={clsx(
+                "text-center p-3 mt-auto text-sm",
+                "transition-colors duration-300 ease-in-out",
+                "bg-pokemon-blue dark:bg-pokemon-blue-dark",
+                "text-pokemon-yellow-light dark:text-pokemon-yellow-light"
+            )}>
+                Pokedex Project &copy; {new Date().getFullYear()}
+            </footer>
+        </div>
     );
 };
 

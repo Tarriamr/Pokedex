@@ -7,7 +7,6 @@ const buttonBaseStyle = "px-4 py-2 rounded font-semibold text-white shadow trans
 const MainNav = () => {
     // Tutaj w przyszłości będzie funkcja wylogowująca
     const handleLogout = () => {
-        console.log("Wylogowano!");
         // Implementacja logiki wylogowania (np. czyszczenie localStorage, kontekstu)
     };
 

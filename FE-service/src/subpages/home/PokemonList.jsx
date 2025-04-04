@@ -1,20 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import clsx from 'clsx'; // Import clsx
+import clsx from 'clsx';
 import usePokemonList from '../../hooks/usePokemonList';
 import SearchBar from '../../shared/SearchBar';
 import PokemonDetailsModal from '../../components/PokemonDetailsModal/PokemonDetailsModal.jsx';
-import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/solid'; // Import ikon
+import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/solid';
 
 const POKEMON_LIMIT = 150;
 const POKEMONS_PER_PAGE = 15;
-const CARDS_PER_ROW = {
-    xs: 1,
-    sm: 2,
-    md: 3,
-    lg: 4,
-    xl: 5,
-};
-// Usunięto CARD_WIDTH_CLASSES, szerokość będzie zarządzana przez flex/grid
 
 const PokemonList = () => {
     const {data: allPokemon, isLoading, isError, error} = usePokemonList(POKEMON_LIMIT);
@@ -22,21 +14,18 @@ const PokemonList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedPokemonId, setSelectedPokemonId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [_, setRenderTrigger] = useState(0); // Do re-renderowania przy resize
 
     const filteredPokemon = allPokemon?.filter(pokemon =>
         pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
-    // Total pages calculation ensures it's at least 1 if there are any pokemon
     const totalPages = Math.max(1, Math.ceil(filteredPokemon.length / POKEMONS_PER_PAGE));
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        setCurrentPage(1); // Resetuj stronę przy nowym wyszukiwaniu
+        setCurrentPage(1);
     };
 
-    // --- Zmieniona logika paginacji ---
     const goToNextPage = () => {
         setCurrentPage(prevPage => (prevPage === totalPages ? 1 : prevPage + 1));
     };
@@ -44,43 +33,6 @@ const PokemonList = () => {
     const goToPreviousPage = () => {
         setCurrentPage(prevPage => (prevPage === 1 ? totalPages : prevPage - 1));
     };
-    // --- Koniec zmian w logice paginacji ---
-
-    const startIndex = (currentPage - 1) * POKEMONS_PER_PAGE;
-    const endIndex = startIndex + POKEMONS_PER_PAGE;
-    const currentPokemonPage = filteredPokemon.slice(startIndex, endIndex);
-
-    // Responsywność - bez zmian w logice
-    const getCurrentBreakpoint = useCallback(() => {
-        // ... (bez zmian)
-        const width = window.innerWidth;
-        if (width < 640) return 'xs';
-        if (width < 768) return 'sm';
-        if (width < 1024) return 'md';
-        if (width < 1280) return 'lg';
-        return 'xl';
-    }, []);
-
-    const getRows = useCallback(() => {
-        // ... (bez zmian)
-        const rows = [];
-        const breakpoint = getCurrentBreakpoint();
-        const cardsPerRow = CARDS_PER_ROW[breakpoint] || 4;
-        for (let i = 0; i < currentPokemonPage.length; i += cardsPerRow) {
-            rows.push(currentPokemonPage.slice(i, i + cardsPerRow));
-        }
-        return rows;
-    }, [currentPokemonPage, getCurrentBreakpoint]);
-
-    useEffect(() => {
-        // ... (bez zmian)
-        const handleResize = () => {
-            setRenderTrigger(prev => prev + 1);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     const openModal = (id) => {
         setSelectedPokemonId(id);
@@ -92,42 +44,72 @@ const PokemonList = () => {
         setIsModalOpen(false);
     };
 
+    // +++ POPRAWKA: Przywrócenie definicji currentPokemonPage +++
+    const startIndex = (currentPage - 1) * POKEMONS_PER_PAGE;
+    const endIndex = startIndex + POKEMONS_PER_PAGE;
+    const currentPokemonPage = filteredPokemon.slice(startIndex, endIndex);
+    // +++ Koniec poprawki +++
+
+    // Dostosowanie wiadomości do dark mode
     if (isLoading) {
-        return <div className="text-center p-10 text-xl text-pokemon-blue-dark">Ładowanie Pokemonów...</div>;
+        return (
+            <div className="text-center p-10 text-xl text-pokemon-blue dark:text-pokemon-blue-light">
+                Ładowanie Pokemonów...
+            </div>
+        );
     }
 
     if (isError) {
-        return <div className="text-center p-10 text-xl text-pokemon-red-dark">Wystąpił błąd podczas pobierania
-            Pokemonów: {error?.message || 'Wystąpił nieznany błąd.'}</div>;
+        return (
+            <div className="text-center p-10 text-xl text-pokemon-red dark:text-red-400"> {/* Użyto jaśniejszej czerwieni dla dark */}
+                Wystąpił błąd podczas pobierania Pokemonów: {error?.message || 'Wystąpił nieznany błąd.'}
+            </div>
+        );
     }
 
     return (
+        // Usunięto bg-white, komponent dziedziczy tło z App.jsx
         <div className="p-4">
+            {/* SearchBar będzie wymagał osobnego dostosowania */}
             <SearchBar onSearch={handleSearch}/>
 
-            {/* Grid dla kart Pokemonów */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
+            {/* Kontener kart */}
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+                {/* Użycie currentPokemonPage - teraz powinno być zdefiniowane */}
                 {currentPokemonPage.length > 0 ? (
                     currentPokemonPage.map(pokemon => (
                         <div
                             key={pokemon.id}
                             className={clsx(
-                                "bg-white rounded-lg shadow-md p-4 transition-transform duration-200 ease-in-out cursor-pointer",
-                                "border border-pokemon-gray-medium hover:border-pokemon-red hover:shadow-lg hover:scale-105",
-                                "flex flex-col items-center text-center" // Wycentrowanie zawartości
+                                "rounded-lg shadow-md p-4 transition-all duration-200 ease-in-out cursor-pointer", // Dodano transition-all
+                                // Style Light Mode
+                                "bg-white border border-pokemon-gray-medium",
+                                "hover:border-pokemon-red hover:shadow-lg hover:scale-105",
+                                // Style Dark Mode
+                                "dark:bg-gray-800 dark:border-gray-700", // Ciemne tło i ramka
+                                "dark:hover:border-pokemon-red", // Czerwona ramka na hover w dark
+                                "flex flex-col items-center text-center",
+                                "w-[280px] h-[280px] box-border"
                             )}
                             onClick={() => openModal(pokemon.id)}
                         >
                             <img
-                                src={pokemon.image || './src/assets/pokeball.svg'} // Fallback image
+                                src={pokemon.image || './src/assets/pokeball.svg'}
                                 alt={pokemon.name}
                                 className="w-32 h-32 object-contain mb-3"
-                                loading="lazy" // Lazy loading dla obrazków
+                                loading="lazy"
                             />
-                            <h2 className="text-lg font-semibold text-pokemon-gray-darker capitalize mb-2">{pokemon.name}</h2>
-                            {/* Usunięto poprzednie szczegóły, są teraz w modalu */}
-                            <div className="text-xs text-pokemon-gray-dark mt-1 w-full grid grid-cols-2 gap-x-2">
-                                {/* Dodano podstawowe staty z powrotem zgodnie z obrazkiem [Image 3] */}
+                            {/* Tekst karty dostosowany do dark mode */}
+                            <h2 className={clsx(
+                                "text-lg font-semibold capitalize mb-2",
+                                "text-pokemon-gray-darker", // Light
+                                "dark:text-pokemon-gray-light" // Dark
+                            )}>{pokemon.name}</h2>
+                            <div className={clsx(
+                                "text-xs mt-1 w-full grid grid-cols-2 gap-x-2",
+                                "text-pokemon-gray-dark", // Light
+                                "dark:text-pokemon-gray-medium" // Dark (nieco jaśniejszy niż główny tekst dark)
+                            )}>
                                 <p><strong>Height:</strong> {pokemon.height}</p>
                                 <p><strong>Exp:</strong> {pokemon.base_experience}</p>
                                 <p><strong>Weight:</strong> {pokemon.weight}</p>
@@ -136,28 +118,39 @@ const PokemonList = () => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-pokemon-gray-dark col-span-full text-center mt-6">Nie znaleziono Pokemonów
-                        pasujących do wyszukiwania.</p>
+                    // Dostosowanie tekstu "Nie znaleziono..." do dark mode
+                    <p className={clsx(
+                        "text-center mt-6 w-full",
+                        "text-pokemon-gray-dark", // Light
+                        "dark:text-pokemon-gray-light" // Dark
+                    )}>
+                        Nie znaleziono Pokemonów pasujących do wyszukiwania.
+                    </p>
                 )}
             </div>
 
-
-            {/* --- Zmieniona Paginacja --- */}
-            {totalPages > 1 && ( // Ukryj, jeśli jest tylko jedna strona
+            {/* --- Paginacja (cyrkularna) --- */}
+            {totalPages > 1 && (
                 <div className="flex justify-center items-center mt-8 space-x-4">
+                    {/* Przyciski paginacji - zakładamy, że obecny styl jest OK w dark mode */}
                     <button
                         onClick={goToPreviousPage}
-                        className="p-2 rounded-full bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-gray-darker shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50"
+                        className="p-2 rounded-[999px] bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark shadow-[0px_4px_10px_0px_rgba(0,0,0,0.30)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50"
                         aria-label="Poprzednia strona"
                     >
                         <ChevronLeftIcon className="h-6 w-6"/>
                     </button>
-                    <span className="text-lg font-medium text-pokemon-gray-darker">
+                    {/* Tekst paginacji dostosowany do dark mode */}
+                    <span className={clsx(
+                        "text-lg font-bold",
+                        "text-pokemon-gray-darker", // Light
+                        "dark:text-pokemon-gray-light" // Dark
+                    )}>
                         {currentPage} / {totalPages}
                     </span>
                     <button
                         onClick={goToNextPage}
-                        className="p-2 rounded-full bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-gray-darker shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50"
+                        className="p-2 rounded-[999px] bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark shadow-[0px_4px_10px_0px_rgba(0,0,0,0.30)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50"
                         aria-label="Następna strona"
                     >
                         <ChevronRightIcon className="h-6 w-6"/>
@@ -166,8 +159,7 @@ const PokemonList = () => {
             )}
             {/* --- Koniec zmian w Paginacji --- */}
 
-
-            {/* Renderowanie komponentu modala */}
+            {/* Modal już był częściowo dostosowany, ale może wymagać dalszych poprawek po testach */}
             {isModalOpen && (
                 <PokemonDetailsModal pokemonId={selectedPokemonId} onClose={closeModal}/>
             )}
