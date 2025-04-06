@@ -41,8 +41,7 @@ export const fetchPokemonList = async (limit = POKEMON_LIMIT, offset = 0) => {
             const details = await Promise.all(
                 results.map(async (pokemon) => {
                     const detailsResponse = await axios.get(pokemon.url);
-                    const processedData = processPokemonData(detailsResponse.data);
-                    return processedData;
+                    return processPokemonData(detailsResponse.data);
                 })
             );
 

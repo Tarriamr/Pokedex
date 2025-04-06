@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Ash Ketchum",
+      "email": "ash@pokemon.com",
+      "password": "pikachu",
+      "preferences": {
+        "theme": "dark"
+      },
+      "favoritePokemonIds": [
+        "7",
+        "25",
+        "6",
+        "9",
+        "106",
+        "149",
+        "5"
+      ],
+      "arenaPokemonIds": [
+        "6",
+        "25"
+      ],
+      "pokemonStats": {}
+    },
+    {
+      "id": "2",
+      "name": "Misty Waterflower",
+      "email": "misty@pokemon.com",
+      "password": "staryu",
+      "preferences": {
+        "theme": "light"
+      },
+      "favoritePokemonIds": [],
+      "arenaPokemonIds": [],
+      "pokemonStats": {}
+    },
+    {
+      "name": "Jan Nowak",
+      "email": "jn@pokemon.com",
+      "password": "Pikachu!1",
+      "preferences": {
+        "theme": "light"
+      },
+      "favoritePokemonIds": [],
+      "arenaPokemonIds": [],
+      "pokemonStats": {},
+      "id": "a8EqESA"
+    }
+  ],
+  "pokemons": []
+}

@@ -1,38 +1,94 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 
-const buttonBaseStyle = "px-4 py-2 rounded font-semibold text-white shadow transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-opacity-50 text-sm"; // Zmniejszono tekst
+// Style podstawowe - zachowujemy focus:outline-none
+const buttonBaseStyle = "px-4 py-2 rounded font-semibold shadow transition-colors duration-200 ease-in-out focus:outline-none text-sm";
+
+// Style dla nieaktywnych linków - zmieniono focus: na focus-visible:
+const inactiveNavLinkStyle = "bg-pokemon-yellow text-pokemon-blue-dark hover:bg-pokemon-yellow-dark focus-visible:ring-2 focus-visible:ring-pokemon-yellow focus-visible:ring-offset-1";
+
+// Style dla AKTYWNEGO linku - ma stały ring, więc nie potrzebuje dodatkowego focus-visible ringu
+const activeNavLinkStyle = "bg-pokemon-yellow-dark text-pokemon-blue-dark font-bold ring-2 ring-pokemon-blue-dark ring-offset-1";
+
+// Style dla przycisku "Wyloguj" - zmieniono focus: na focus-visible:
+const logoutButtonBaseBgTextStyle = "bg-pokemon-gray-dark text-white";
+const logoutButtonHoverFocusStyle = "hover:bg-pokemon-gray-darker focus-visible:ring-2 focus-visible:ring-pokemon-gray-dark focus-visible:ring-offset-1";
 
 const MainNav = () => {
-    // Tutaj w przyszłości będzie funkcja wylogowująca
+    const { logout } = useAuth();
+    const { theme } = useTheme();
+    const location = useLocation();
+    const currentPath = location.pathname;
+
     const handleLogout = () => {
-        // Implementacja logiki wylogowania (np. czyszczenie localStorage, kontekstu)
+        logout();
+    };
+
+    // Klasy dla pierścienia (konturu) zależne od motywu - dla NIEAKTYWNYCH przycisków
+    const ringClass = theme === 'light'
+        ? "ring-1 ring-pokemon-blue-dark"
+        : "dark:ring-1 dark:ring-pokemon-yellow";
+
+    // Funkcja pomocnicza do generowania klas dla linków nawigacyjnych
+    const getNavLinkClasses = (path) => {
+        const isActive = currentPath === path;
+        return clsx(
+            buttonBaseStyle,
+            isActive ? activeNavLinkStyle : inactiveNavLinkStyle,
+            !isActive && ringClass
+        );
     };
 
     return (
-        <div className="flex items-center space-x-2"> {/* Zmniejszono odstępy */}
-            <Link to="/favourites"
-                  className={clsx(buttonBaseStyle, "bg-pink-500 hover:bg-pink-600 focus:ring-pink-500")}>
+        <div className="flex items-center space-x-2">
+
+            <Link
+                to="/"
+                className={getNavLinkClasses('/')}
+                aria-current={currentPath === '/' ? 'page' : undefined}
+            >
+                Pokedex
+            </Link>
+
+            <Link
+                to="/favourites"
+                className={getNavLinkClasses('/favourites')}
+                aria-current={currentPath === '/favourites' ? 'page' : undefined}
+            >
                 Ulubione
             </Link>
-            <Link to="/arena"
-                  className={clsx(buttonBaseStyle, "bg-purple-500 hover:bg-purple-600 focus:ring-purple-500")}>
+
+            <Link
+                to="/arena"
+                className={getNavLinkClasses('/arena')}
+                aria-current={currentPath === '/arena' ? 'page' : undefined}
+            >
                 Arena
             </Link>
-            <Link to="/ranking"
-                  className={clsx(buttonBaseStyle, "bg-orange-500 hover:bg-orange-600 focus:ring-orange-500")}>
+
+            <Link
+                to="/ranking"
+                className={getNavLinkClasses('/ranking')}
+                aria-current={currentPath === '/ranking' ? 'page' : undefined}
+            >
                 Ranking
             </Link>
-            <Link to="/edit" className={clsx(buttonBaseStyle, "bg-teal-500 hover:bg-teal-600 focus:ring-teal-500")}>
+
+            <Link
+                to="/edit"
+                className={getNavLinkClasses('/edit')}
+                aria-current={currentPath === '/edit' ? 'page' : undefined}
+            >
                 Edycja
             </Link>
+
+            {/* Przycisk Wyloguj - zmiana w logoutButtonHoverFocusStyle */}
             <button
                 onClick={handleLogout}
-                className={clsx(
-                    buttonBaseStyle,
-                    "bg-pokemon-red hover:bg-pokemon-red-dark focus:ring-pokemon-red"
-                )}
+                className={clsx(buttonBaseStyle, logoutButtonBaseBgTextStyle, logoutButtonHoverFocusStyle, ringClass)}
             >
                 Wyloguj
             </button>

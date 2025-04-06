@@ -1,32 +1,37 @@
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'; // Ikony słońca i księżyca
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
 const ThemeToggleButton = () => {
-    const { theme, toggleTheme } = useTheme();
+    const { theme, toggleTheme, isUpdatingTheme } = useTheme();
 
-    // Określenie etykiety dla dostępności
     const ariaLabel = `Przełącz na tryb ${theme === 'light' ? 'ciemny' : 'jasny'}`;
 
     return (
         <button
             onClick={toggleTheme}
+            disabled={isUpdatingTheme}
             aria-label={ariaLabel}
-            title={ariaLabel} // Dodatkowy tooltip dla jasności
+            title={ariaLabel}
             className={clsx(
-                "p-2 rounded-full transition-colors duration-200 ease-in-out",
-                "focus:outline-none focus:ring-2 focus:ring-offset-2",
-                // Kolory - dopasowane do stopki i nawigacji, aby były widoczne na czerwonym/ciemnym tle nagłówka
-                "text-pokemon-yellow-light hover:text-white", // Jasnożółty, biały na hover
-                "dark:text-pokemon-yellow-light dark:hover:text-white", // Takie same kolory w dark mode na ciemnym tle nagłówka
-                "focus:ring-pokemon-yellow focus:ring-offset-pokemon-red dark:focus:ring-offset-pokemon-red-dark" // Pierścień focus
+                "p-2 rounded-full transition-all duration-150 ease-in-out",
+                "focus:outline-none", // Usunięcie domyślnego outline
+                // Style wskaźnika fokusu tylko dla `focus-visible`
+                "focus-visible:ring-2 focus-visible:ring-offset-2",
+                // Kolory
+                "text-pokemon-yellow-light hover:text-white",
+                "dark:text-pokemon-yellow-light dark:hover:text-white",
+                // Kolory wskaźnika fokusu
+                "focus-visible:ring-pokemon-yellow focus-visible:ring-offset-pokemon-red dark:focus-visible:ring-offset-pokemon-red-dark",
+                "active:scale-95 active:brightness-90",
+                isUpdatingTheme && "opacity-50 cursor-not-allowed"
             )}
         >
             {theme === 'light' ? (
-                <MoonIcon className="h-6 w-6" aria-hidden="true" /> // Pokaż ikonę księżyca, aby przełączyć na dark
+                <MoonIcon className="h-6 w-6" aria-hidden="true" />
             ) : (
-                <SunIcon className="h-6 w-6" aria-hidden="true" /> // Pokaż ikonę słońca, aby przełączyć na light
+                <SunIcon className="h-6 w-6" aria-hidden="true" />
             )}
         </button>
     );
