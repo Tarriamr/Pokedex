@@ -1,17 +1,21 @@
-import React, { createContext, useState, useContext, useEffect, useMemo, useCallback } from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import PropTypes from 'prop-types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { loginUser, registerUser, getUserData } from '../services/api/auth.js';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {getUserData, loginUser, registerUser} from '../services/api/auth.js';
 
 const AuthContext = createContext({
     currentUser: null,
     isLoggedIn: false,
     isLoading: false,
     error: null,
-    login: async () => {},
-    logout: () => {},
-    register: async () => {},
-    clearError: () => {},
+    login: async () => {
+    },
+    logout: () => {
+    },
+    register: async () => {
+    },
+    clearError: () => {
+    },
     isLoggingIn: false,
     isRegistering: false,
     isLoadingUser: false,
@@ -19,7 +23,7 @@ const AuthContext = createContext({
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({children}) => {
     const [loggedInUserId, setLoggedInUserId] = useState(null);
     const [error, setError] = useState(null);
     const queryClient = useQueryClient();
@@ -69,7 +73,7 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         // console.log("Wylogowywanie"); // Usunięto log
         setLoggedInUserId(null);
-        queryClient.removeQueries({ queryKey: ['user', loggedInUserId], exact: true });
+        queryClient.removeQueries({queryKey: ['user', loggedInUserId], exact: true});
     }, [queryClient, loggedInUserId]);
 
     const register = useCallback(async (userData) => {

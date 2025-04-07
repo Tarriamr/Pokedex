@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 // Współdzielony komponent Karty Pokemona
-const PokemonCard = ({ pokemon, onClick, userStats }) => {
+const PokemonCard = ({pokemon, onClick, userStats}) => {
     const stats = userStats ? userStats[String(pokemon.id)] : null;
     const displayBaseExperience = stats?.modified_base_experience ?? pokemon.base_experience ?? 0;
 
@@ -58,7 +58,8 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
                     }
                 </p>
                 <p><strong className="font-medium">Weight:</strong> {pokemon.weight}kg</p>
-                <p><strong className="font-medium">Ability:</strong> {pokemon.abilities?.[0]?.ability?.name || 'N/A'}</p>
+                <p><strong className="font-medium">Ability:</strong> {pokemon.abilities?.[0]?.ability?.name || 'N/A'}
+                </p>
             </div>
         </div>
     );

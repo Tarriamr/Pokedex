@@ -9,19 +9,121 @@
         "theme": "dark"
       },
       "favoritePokemonIds": [
-        "7",
         "25",
         "6",
-        "9",
-        "106",
         "149",
-        "5"
+        "78",
+        "148"
       ],
-      "arenaPokemonIds": [
-        "6",
-        "25"
-      ],
-      "pokemonStats": {}
+      "arenaPokemonIds": [],
+      "pokemonStats": {
+        "2": {
+          "wins": 3,
+          "losses": 0,
+          "modified_base_experience": 172
+        },
+        "3": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 273
+        },
+        "4": {
+          "wins": 0,
+          "losses": 4,
+          "modified_base_experience": 62
+        },
+        "5": {
+          "wins": 0,
+          "losses": 1
+        },
+        "6": {
+          "wins": 9,
+          "losses": 1,
+          "modified_base_experience": 357
+        },
+        "7": {
+          "wins": 1,
+          "losses": 9,
+          "modified_base_experience": 73
+        },
+        "9": {
+          "wins": 1,
+          "losses": 13,
+          "modified_base_experience": 275
+        },
+        "11": {
+          "wins": 0,
+          "losses": 1
+        },
+        "14": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 82
+        },
+        "18": {
+          "wins": 0,
+          "losses": 1,
+          "modified_base_experience": 216
+        },
+        "25": {
+          "wins": 8,
+          "losses": 2,
+          "modified_base_experience": 192
+        },
+        "53": {
+          "wins": 0,
+          "losses": 1
+        },
+        "59": {
+          "wins": 2,
+          "losses": 0,
+          "modified_base_experience": 214
+        },
+        "71": {
+          "wins": 1,
+          "losses": 1,
+          "modified_base_experience": 231
+        },
+        "73": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 190
+        },
+        "78": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 185
+        },
+        "82": {
+          "wins": 2,
+          "losses": 0,
+          "modified_base_experience": 183
+        },
+        "89": {
+          "wins": 0,
+          "losses": 2
+        },
+        "106": {
+          "wins": 2,
+          "losses": 0,
+          "modified_base_experience": 179
+        },
+        "131": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 197
+        },
+        "148": {
+          "wins": 0,
+          "losses": 1,
+          "modified_base_experience": 147
+        },
+        "149": {
+          "wins": 3,
+          "losses": 0,
+          "modified_base_experience": 330
+        }
+      }
     },
     {
       "id": "2",

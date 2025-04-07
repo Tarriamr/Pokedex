@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import clsx from 'clsx';
-import { useAuth } from '../../context/AuthContext.jsx';
-import { useTheme } from '../../context/ThemeContext.jsx';
+import {useAuth} from '../../context/AuthContext.jsx';
+import {useTheme} from '../../context/ThemeContext.jsx';
 
 // Style podstawowe - zachowujemy focus:outline-none
 const buttonBaseStyle = "px-4 py-2 rounded font-semibold shadow transition-colors duration-200 ease-in-out focus:outline-none text-sm";
@@ -18,8 +18,8 @@ const logoutButtonBaseBgTextStyle = "bg-pokemon-gray-dark text-white";
 const logoutButtonHoverFocusStyle = "hover:bg-pokemon-gray-darker focus-visible:ring-2 focus-visible:ring-pokemon-gray-dark focus-visible:ring-offset-1";
 
 const MainNav = () => {
-    const { logout } = useAuth();
-    const { theme } = useTheme();
+    const {logout} = useAuth();
+    const {theme} = useTheme();
     const location = useLocation();
     const currentPath = location.pathname;
 

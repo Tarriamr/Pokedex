@@ -1,47 +1,44 @@
-import React, { useState } from 'react';
-// Usunięto PropTypes, bo jest w PokemonCard
+import React, {useMemo, useState} from 'react';
 import clsx from 'clsx';
 import usePokemonList from '../../hooks/usePokemonList';
+import {usePagination} from '../../hooks/usePagination.js';
 import SearchBar from '../../shared/SearchBar';
 import PokemonDetailsModal from '../../components/PokemonDetailsModal/PokemonDetailsModal.jsx';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
-import { useAuth } from '../../context/AuthContext';
-import PokemonCard from '../../components/PokemonCard/PokemonCard'; // Import współdzielonego komponentu
+import PokemonGrid from '../../components/PokemonGrid/PokemonGrid.jsx';
+import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/solid';
+import {useAuth} from '../../context/AuthContext';
+import {POKEMON_API_LIMIT, POKEMONS_PER_PAGE} from '../../config/constants'; // Import stałych
 
-const POKEMON_LIMIT = 150;
-const POKEMONS_PER_PAGE = 15;
-
-// Usunięto wewnętrzny komponent PokemonCard
-
-// --- Komponent Głównej Listy Pokemonów --- //
 const PokemonList = () => {
-    const { data: allPokemon, isLoading, isError, error } = usePokemonList(POKEMON_LIMIT);
-    const { currentUser } = useAuth();
+    // Użycie stałej z pliku konfiguracyjnego
+    const {data: allPokemon, isLoading, isError, error} = usePokemonList(POKEMON_API_LIMIT);
+    const {currentUser} = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
     const [selectedPokemonId, setSelectedPokemonId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const filteredPokemon = allPokemon?.filter(pokemon =>
-        pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+    const filteredPokemon = useMemo(() => {
+        return allPokemon?.filter(pokemon =>
+            pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ) || [];
+    }, [allPokemon, searchQuery]);
 
-    const totalPages = Math.max(1, Math.ceil(filteredPokemon.length / POKEMONS_PER_PAGE));
+    // Użycie stałej z pliku konfiguracyjnego
+    const {
+        currentPage,
+        totalPages,
+        goToNextPage,
+        goToPreviousPage,
+        setCurrentPage,
+        startIndex,
+        endIndex,
+    } = usePagination(filteredPokemon.length, POKEMONS_PER_PAGE);
 
     const handleSearch = (query) => {
         setSearchQuery(query);
         setCurrentPage(1);
     };
 
-    const goToNextPage = () => {
-        setCurrentPage(prevPage => (prevPage === totalPages ? 1 : prevPage + 1));
-    };
-
-    const goToPreviousPage = () => {
-        setCurrentPage(prevPage => (prevPage === 1 ? totalPages : prevPage - 1));
-    };
-
-    // Handler kliknięcia karty przekazywany do PokemonCard
     const handleCardClick = (id) => {
         setSelectedPokemonId(id);
         setIsModalOpen(true);
@@ -52,21 +49,14 @@ const PokemonList = () => {
         setIsModalOpen(false);
     };
 
-    const startIndex = (currentPage - 1) * POKEMONS_PER_PAGE;
-    const endIndex = startIndex + POKEMONS_PER_PAGE;
-    const currentPokemonPage = filteredPokemon.slice(startIndex, endIndex);
-
-    if (isLoading) {
-        return (
-            <div className="text-center p-10 text-xl text-pokemon-blue dark:text-pokemon-blue-light transition-colors duration-300 ease-in-out">
-                Ładowanie Pokemonów...
-            </div>
-        );
-    }
+    const currentPokemonPage = useMemo(() => {
+        return filteredPokemon.slice(startIndex, endIndex);
+    }, [filteredPokemon, startIndex, endIndex]);
 
     if (isError) {
         return (
-            <div className="text-center p-10 text-xl text-pokemon-red dark:text-red-400 transition-colors duration-300 ease-in-out">
+            <div
+                className="text-center p-10 text-xl text-pokemon-red dark:text-red-400 transition-colors duration-300 ease-in-out">
                 Wystąpił błąd podczas pobierania Pokemonów: {error?.message || 'Wystąpił nieznany błąd.'}
             </div>
         );
@@ -74,31 +64,18 @@ const PokemonList = () => {
 
     return (
         <div className="p-4">
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar onSearch={handleSearch}/>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-6">
-                {currentPokemonPage.length > 0 ? (
-                    currentPokemonPage.map(pokemon => (
-                        // Używamy współdzielonego komponentu PokemonCard
-                        <PokemonCard
-                            key={pokemon.id} // Klucz jest potrzebny tutaj w .map()
-                            pokemon={pokemon}
-                            onClick={handleCardClick} // Przekazujemy handler
-                            userStats={currentUser?.pokemonStats}
-                        />
-                    ))
-                ) : (
-                    <p className={clsx(
-                        "col-span-full text-center mt-6 w-full transition-colors duration-300 ease-in-out",
-                        "text-pokemon-gray-dark dark:text-pokemon-gray-light"
-                    )}>
-                        Nie znaleziono Pokemonów pasujących do wyszukiwania.
-                    </p>
-                )}
-            </div>
+            <PokemonGrid
+                pokemons={currentPokemonPage}
+                onCardClick={handleCardClick}
+                userStats={currentUser?.pokemonStats}
+                isLoading={isLoading}
+                loadingMessage="Ładowanie Pokemonów..."
+                emptyMessage="Nie znaleziono Pokemonów pasujących do wyszukiwania."
+            />
 
-            {/* Paginacja (bez zmian) */}
-            {totalPages > 1 && (
+            {!isLoading && totalPages > 1 && (
                 <div className="flex justify-center items-center mt-8 space-x-3">
                     <button
                         onClick={goToPreviousPage}

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'; // Import ikony
+import {MagnifyingGlassIcon} from '@heroicons/react/24/outline'; // Import ikony
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = ({onSearch}) => {
     const [searchText, setSearchText] = useState('');
 
     const handleInputChange = (event) => {
@@ -30,7 +30,7 @@ const SearchBar = ({ onSearch }) => {
                 <MagnifyingGlassIcon className={clsx(
                     "h-5 w-5",
                     "text-pokemon-gray-dark dark:text-pokemon-gray-light" // Kolor ikony (ZMIENIONO w dark na gray-light)
-                )} aria-hidden="true" />
+                )} aria-hidden="true"/>
             </div>
             <input
                 type="text"

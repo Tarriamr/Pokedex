@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import {Navigate, Outlet, useLocation} from 'react-router-dom';
+import {useAuth} from '../../context/AuthContext';
 import clsx from 'clsx';
 
 // Komponent chroniący trasy wymagające zalogowania
-const ProtectedRoute = ({ children }) => {
-    const { isLoggedIn, isLoading } = useAuth();
+const ProtectedRoute = ({children}) => {
+    const {isLoggedIn, isLoading} = useAuth();
     const location = useLocation(); // Pobierz aktualną lokalizację
 
     // 1. Pokaż loader, jeśli stan autentykacji jest jeszcze sprawdzany
@@ -24,13 +24,13 @@ const ProtectedRoute = ({ children }) => {
     // 2. Jeśli użytkownik nie jest zalogowany, przekieruj na /login
     //    Zapamiętaj obecną lokalizację, aby wrócić po zalogowaniu
     if (!isLoggedIn) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
+        return <Navigate to="/login" state={{from: location}} replace/>;
     }
 
     // 3. Jeśli zalogowany, renderuj komponent potomny (Outlet dla zagnieżdżonych tras lub children dla pojedynczej)
     //    Użyjemy Outlet, zakładając, że będziemy go używać do opakowania tras w App.jsx
     //    Jeśli przekazujemy pojedynczy komponent jako children, to return children;
-    return children ? children : <Outlet />;
+    return children ? children : <Outlet/>;
 };
 
 ProtectedRoute.propTypes = {

@@ -1,21 +1,24 @@
-import React, { useState, useMemo } from 'react';
-import clsx from 'clsx';
-import { useAuth } from '../../context/AuthContext.jsx';
+import React, {useMemo, useState} from 'react';
+import {useAuth} from '../../context/AuthContext.jsx';
 import usePokemonList from '../../hooks/usePokemonList.jsx';
 import PokemonDetailsModal from '../../components/PokemonDetailsModal/PokemonDetailsModal.jsx';
-import PokemonCard from '../../components/PokemonCard/PokemonCard';
-
-const POKEMON_LIMIT = 251;
+import PokemonGrid from '../../components/PokemonGrid/PokemonGrid.jsx';
+import {POKEMON_API_LIMIT} from '../../config/constants'; // Import stałej
 
 const FavouritesPage = () => {
-    // Pobieramy tylko currentUser, bo isLoggedIn jest sprawdzane przez ProtectedRoute
-    const { currentUser } = useAuth();
-    const { data: allPokemon, isLoading: isLoadingList, isError: isErrorList, error: errorList } = usePokemonList(POKEMON_LIMIT);
+    const {currentUser} = useAuth();
+    // Użycie stałej z pliku konfiguracyjnego
+    const {
+        data: allPokemon,
+        isLoading: isLoadingList,
+        isError: isErrorList,
+        error: errorList
+    } = usePokemonList(POKEMON_API_LIMIT);
 
     const [selectedPokemonId, setSelectedPokemonId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const favoriteIds = useMemo(() => currentUser?.favoritePokemonIds?.map(String) || [], [currentUser]);
+    const favoriteIds = useMemo(() => currentUser?.favoritePokemonIds?.map(String) || [], [currentUser?.favoritePokemonIds]);
 
     const favoritePokemons = useMemo(() => {
         if (!allPokemon || favoriteIds.length === 0) {
@@ -35,19 +38,10 @@ const FavouritesPage = () => {
         setIsModalOpen(false);
     };
 
-    // Usunięto blok `if (!isLoggedIn) { ... }`
-
-    if (isLoadingList) {
-        return (
-            <div className="text-center p-10 text-xl text-pokemon-blue dark:text-pokemon-blue-light transition-colors duration-300 ease-in-out">
-                Ładowanie ulubionych...
-            </div>
-        );
-    }
-
     if (isErrorList) {
         return (
-            <div className="text-center p-10 text-xl text-pokemon-red dark:text-red-400 transition-colors duration-300 ease-in-out">
+            <div
+                className="text-center p-10 text-xl text-pokemon-red dark:text-red-400 transition-colors duration-300 ease-in-out">
                 Wystąpił błąd podczas pobierania danych: {errorList?.message || 'Wystąpił nieznany błąd.'}
             </div>
         );
@@ -59,25 +53,14 @@ const FavouritesPage = () => {
                 Ulubione Pokémony
             </h1>
 
-            {favoritePokemons.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-6">
-                    {favoritePokemons.map(pokemon => (
-                        <PokemonCard
-                            key={pokemon.id}
-                            pokemon={pokemon}
-                            onClick={handleCardClick}
-                            userStats={currentUser?.pokemonStats}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <p className={clsx(
-                    "col-span-full text-center mt-6 w-full transition-colors duration-300 ease-in-out",
-                    "text-pokemon-gray-dark dark:text-pokemon-gray-light"
-                )}>
-                    Nie masz jeszcze żadnych ulubionych Pokémonów. Dodaj je, klikając serce w widoku szczegółów!
-                </p>
-            )}
+            <PokemonGrid
+                pokemons={favoritePokemons}
+                onCardClick={handleCardClick}
+                userStats={currentUser?.pokemonStats}
+                isLoading={isLoadingList}
+                loadingMessage="Ładowanie ulubionych..."
+                emptyMessage="Nie masz jeszcze żadnych ulubionych Pokémonów. Dodaj je, klikając serce w widoku szczegółów!"
+            />
 
             {isModalOpen && (
                 <PokemonDetailsModal pokemonId={selectedPokemonId} onClose={closeModal}/>

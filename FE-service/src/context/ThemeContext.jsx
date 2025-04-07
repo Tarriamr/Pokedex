@@ -1,8 +1,8 @@
-import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import PropTypes from 'prop-types';
-import { useAuth } from './AuthContext';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateUserPreferences } from '../services/api/auth'; // <<-- Import update function
+import {useAuth} from './AuthContext';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {updateUserPreferences} from '../services/api/auth'; // <<-- Import update function
 
 // Helper function for anonymous theme
 const getInitialAnonymousTheme = () => {
@@ -17,15 +17,16 @@ const getInitialAnonymousTheme = () => {
 
 const ThemeContext = createContext({
     theme: 'light',
-    toggleTheme: () => {},
+    toggleTheme: () => {
+    },
     isUserPreference: false,
     isUpdatingTheme: false,
 });
 
 export const useTheme = () => useContext(ThemeContext);
 
-export const ThemeProvider = ({ children }) => {
-    const { currentUser, isLoggedIn } = useAuth();
+export const ThemeProvider = ({children}) => {
+    const {currentUser, isLoggedIn} = useAuth();
     const queryClient = useQueryClient();
     const [theme, setTheme] = useState(getInitialAnonymousTheme);
     const [isUserPreference, setIsUserPreference] = useState(false);
@@ -34,7 +35,7 @@ export const ThemeProvider = ({ children }) => {
 
     // --- Mutation for updating theme preference --- //
     const updateThemeMutation = useMutation({
-        mutationFn: ({ userId, newTheme }) => updateUserPreferences(userId, { theme: newTheme }),
+        mutationFn: ({userId, newTheme}) => updateUserPreferences(userId, {theme: newTheme}),
         onSuccess: (updatedUser) => {
             console.log('[ThemeContext] Theme updated successfully on server', updatedUser);
             queryClient.setQueryData(['user', currentUser?.id], updatedUser);
@@ -99,7 +100,7 @@ export const ThemeProvider = ({ children }) => {
 
         if (isLoggedIn && currentUser) {
             console.log(`[ThemeContext] Calling mutation to update theme for user ${currentUser.id} to ${newTheme}`);
-            updateThemeMutation.mutate({ userId: currentUser.id, newTheme });
+            updateThemeMutation.mutate({userId: currentUser.id, newTheme});
         } else {
             console.log(`[ThemeContext] Updating local theme state for anonymous user to ${newTheme}`);
             setTheme(newTheme);

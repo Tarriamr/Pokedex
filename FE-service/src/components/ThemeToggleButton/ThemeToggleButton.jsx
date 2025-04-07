@@ -1,10 +1,10 @@
 import React from 'react';
-import { useTheme } from '../../context/ThemeContext';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
+import {useTheme} from '../../context/ThemeContext';
+import {MoonIcon, SunIcon} from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
 const ThemeToggleButton = () => {
-    const { theme, toggleTheme, isUpdatingTheme } = useTheme();
+    const {theme, toggleTheme, isUpdatingTheme} = useTheme();
 
     const ariaLabel = `Przełącz na tryb ${theme === 'light' ? 'ciemny' : 'jasny'}`;
 
@@ -29,9 +29,9 @@ const ThemeToggleButton = () => {
             )}
         >
             {theme === 'light' ? (
-                <MoonIcon className="h-6 w-6" aria-hidden="true" />
+                <MoonIcon className="h-6 w-6" aria-hidden="true"/>
             ) : (
-                <SunIcon className="h-6 w-6" aria-hidden="true" />
+                <SunIcon className="h-6 w-6" aria-hidden="true"/>
             )}
         </button>
     );

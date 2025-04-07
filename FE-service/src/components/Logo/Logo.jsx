@@ -1,13 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import clsx from 'clsx';
-import { useTheme } from '../../context/ThemeContext.jsx';
+import {useTheme} from '../../context/ThemeContext.jsx';
 
 // Importujemy ścieżkę do logo
 import pokemonLogo from '../../assets/pokémon_logo.svg';
 
 const Logo = () => {
-    const { theme } = useTheme();
+    const {theme} = useTheme();
 
     return (
         <Link
