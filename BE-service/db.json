@@ -9,11 +9,22 @@
         "theme": "dark"
       },
       "favoritePokemonIds": [
+        "7",
         "25",
         "6",
+        "9",
+        "106",
         "149",
+        "5",
         "78",
-        "148"
+        "14",
+        "11",
+        "3",
+        "59",
+        "51",
+        "82",
+        "76",
+        "95"
       ],
       "arenaPokemonIds": [],
       "pokemonStats": {
@@ -43,12 +54,12 @@
         },
         "7": {
           "wins": 1,
-          "losses": 9,
+          "losses": 10,
           "modified_base_experience": 73
         },
         "9": {
           "wins": 1,
-          "losses": 13,
+          "losses": 12,
           "modified_base_experience": 275
         },
         "11": {
@@ -75,9 +86,9 @@
           "losses": 1
         },
         "59": {
-          "wins": 2,
+          "wins": 1,
           "losses": 0,
-          "modified_base_experience": 214
+          "modified_base_experience": 204
         },
         "71": {
           "wins": 1,
@@ -112,11 +123,6 @@
           "wins": 1,
           "losses": 0,
           "modified_base_experience": 197
-        },
-        "148": {
-          "wins": 0,
-          "losses": 1,
-          "modified_base_experience": 147
         },
         "149": {
           "wins": 3,

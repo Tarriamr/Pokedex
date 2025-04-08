@@ -1,25 +1,25 @@
 import React from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
-import {useAuth} from '../../context/AuthContext.jsx';
-import {useTheme} from '../../context/ThemeContext.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 
-// Style podstawowe - zachowujemy focus:outline-none
+// Style podstawowe
 const buttonBaseStyle = "px-4 py-2 rounded font-semibold shadow transition-colors duration-200 ease-in-out focus:outline-none text-sm";
 
-// Style dla nieaktywnych linków - zmieniono focus: na focus-visible:
+// Style dla nieaktywnych linków (z focus-visible)
 const inactiveNavLinkStyle = "bg-pokemon-yellow text-pokemon-blue-dark hover:bg-pokemon-yellow-dark focus-visible:ring-2 focus-visible:ring-pokemon-yellow focus-visible:ring-offset-1";
 
-// Style dla AKTYWNEGO linku - ma stały ring, więc nie potrzebuje dodatkowego focus-visible ringu
+// Style dla AKTYWNEGO linku (ze stałym ringiem)
 const activeNavLinkStyle = "bg-pokemon-yellow-dark text-pokemon-blue-dark font-bold ring-2 ring-pokemon-blue-dark ring-offset-1";
 
-// Style dla przycisku "Wyloguj" - zmieniono focus: na focus-visible:
+// Style dla przycisku "Wyloguj" (z focus-visible)
 const logoutButtonBaseBgTextStyle = "bg-pokemon-gray-dark text-white";
 const logoutButtonHoverFocusStyle = "hover:bg-pokemon-gray-darker focus-visible:ring-2 focus-visible:ring-pokemon-gray-dark focus-visible:ring-offset-1";
 
 const MainNav = () => {
-    const {logout} = useAuth();
-    const {theme} = useTheme();
+    const { logout } = useAuth();
+    const { theme } = useTheme();
     const location = useLocation();
     const currentPath = location.pathname;
 
@@ -38,7 +38,7 @@ const MainNav = () => {
         return clsx(
             buttonBaseStyle,
             isActive ? activeNavLinkStyle : inactiveNavLinkStyle,
-            !isActive && ringClass
+            !isActive && ringClass // Dodaj ring tylko dla nieaktywnych
         );
     };
 
@@ -69,6 +69,7 @@ const MainNav = () => {
                 Arena
             </Link>
 
+            {/* Dodano link do Rankingu */}
             <Link
                 to="/ranking"
                 className={getNavLinkClasses('/ranking')}
@@ -77,15 +78,15 @@ const MainNav = () => {
                 Ranking
             </Link>
 
-            <Link
+            {/* Usunięto link do Edycji (zgodnie z harmonogramem jeszcze nie istnieje?) */}
+            {/* <Link
                 to="/edit"
                 className={getNavLinkClasses('/edit')}
                 aria-current={currentPath === '/edit' ? 'page' : undefined}
             >
                 Edycja
-            </Link>
+            </Link> */}
 
-            {/* Przycisk Wyloguj - zmiana w logoutButtonHoverFocusStyle */}
             <button
                 onClick={handleLogout}
                 className={clsx(buttonBaseStyle, logoutButtonBaseBgTextStyle, logoutButtonHoverFocusStyle, ringClass)}
