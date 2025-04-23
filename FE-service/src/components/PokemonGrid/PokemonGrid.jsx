@@ -4,13 +4,12 @@ import clsx from 'clsx';
 import PokemonCard from '../PokemonCard/PokemonCard';
 
 // Komponent do renderowania siatki kart Pokemonów
-const PokemonGrid = ({pokemons, onCardClick, userStats, isLoading, loadingMessage, emptyMessage}) => {
+const PokemonGrid = ({ pokemons, onCardClick, userStats, isLoading, loadingMessage, emptyMessage }) => {
 
     // Stan ładowania
     if (isLoading) {
         return (
-            <div
-                className="text-center p-10 text-xl text-pokemon-blue dark:text-pokemon-blue-light transition-colors duration-300 ease-in-out">
+            <div className="text-center p-10 text-xl text-pokemon-blue dark:text-pokemon-blue-light transition-colors duration-300 ease-in-out">
                 {loadingMessage || 'Ładowanie Pokemonów...'}
             </div>
         );

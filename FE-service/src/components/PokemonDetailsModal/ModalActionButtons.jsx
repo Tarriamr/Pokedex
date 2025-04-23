@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import {HeartIcon} from '@heroicons/react/24/solid';
-import {HeartIcon as HeartIconOutline} from '@heroicons/react/24/outline';
-import {Swords} from 'lucide-react';
+import { HeartIcon } from '@heroicons/react/24/solid';
+import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
+import { Swords } from 'lucide-react';
 
 // Komponent dla przycisków akcji w modalu (Ulubione, Arena)
+// Usunięto zewnętrzny div i klasy pozycjonowania.
+// Używa React.Fragment do zwrócenia przycisków jako rodzeństwa.
 const ModalActionButtons = ({
                                 isFavorite,
                                 isOnArena,
@@ -16,7 +18,7 @@ const ModalActionButtons = ({
                                 isUpdatingArena,
                             }) => {
     return (
-        <div className="absolute top-3 left-3 flex space-x-2 z-10">
+        <>
             {/* Przycisk Ulubione */}
             <button
                 onClick={toggleFavorite}
@@ -31,7 +33,7 @@ const ModalActionButtons = ({
                 aria-label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
                 title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
             >
-                {isFavorite ? <HeartIcon className="h-6 w-6"/> : <HeartIconOutline className="h-6 w-6"/>}
+                {isFavorite ? <HeartIcon className="h-6 w-6" /> : <HeartIconOutline className="h-6 w-6" />}
             </button>
 
             {/* Przycisk Arena */}
@@ -48,9 +50,9 @@ const ModalActionButtons = ({
                 aria-label={isOnArena ? "Usuń z Areny" : (canAddToArena ? "Dodaj do Areny" : "Arena pełna")}
                 title={isOnArena ? "Usuń z Areny" : (canAddToArena ? "Dodaj do Areny" : "Arena pełna")}
             >
-                <Swords className="h-6 w-6" strokeWidth={isOnArena ? 2.5 : 2}/>
+                <Swords className="h-6 w-6" strokeWidth={isOnArena ? 2.5 : 2} />
             </button>
-        </div>
+        </>
     );
 };
 

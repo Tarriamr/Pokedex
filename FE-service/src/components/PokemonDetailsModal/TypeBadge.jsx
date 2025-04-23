@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 // Komponent do wyświetlania etykiety typu Pokemona
 // Wykorzystuje dynamiczne klasy tła zdefiniowane w tailwind.config.js
-const TypeBadge = ({type}) => {
+const TypeBadge = ({ type }) => {
     if (!type) return null;
 
     const typeClass = `bg-pokemon-type-${type.toLowerCase()}`;

@@ -1,21 +1,18 @@
-import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import React, { createContext, useState, useContext, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import {getUserData, loginUser, registerUser} from '../services/api/auth.js';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { loginUser, registerUser, getUserData } from '../services/api/auth.js';
 
 const AuthContext = createContext({
     currentUser: null,
     isLoggedIn: false,
     isLoading: false,
-    error: null,
-    login: async () => {
-    },
-    logout: () => {
-    },
-    register: async () => {
-    },
-    clearError: () => {
-    },
+    // error: null, // Removed error from context value signature
+    login: async () => {},
+    logout: () => {},
+    register: async () => {},
+    // clearError: () => {}, // Removed clearError
     isLoggingIn: false,
     isRegistering: false,
     isLoadingUser: false,
@@ -23,102 +20,105 @@ const AuthContext = createContext({
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider = ({children}) => {
-    const [loggedInUserId, setLoggedInUserId] = useState(null);
-    const [error, setError] = useState(null);
+export const AuthProvider = ({ children }) => {
+    const [loggedInUserId, setLoggedInUserId] = useState(() => {
+        return localStorage.getItem('loggedInUserId');
+    });
+    // const [authError, setAuthError] = useState(null); // Removed authError state
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
-    const {
-        data: currentUser,
-        isLoading: isLoadingUser,
-        isError: isUserQueryError,
-        error: userQueryError
-    } = useQuery({
+    const { data: currentUser, isLoading: isLoadingUser, isError: isUserQueryError, error: userQueryError } = useQuery({
         queryKey: ['user', loggedInUserId],
         queryFn: () => getUserData(loggedInUserId),
         enabled: !!loggedInUserId,
         staleTime: 5 * 60 * 1000,
-        retry: 1
+        retry: 1,
     });
 
     const loginMutation = useMutation({
         mutationFn: loginUser,
         onSuccess: (data) => {
-            // console.log("Login successful, userId:", data.id); // Usunięto log
             setLoggedInUserId(data.id);
-            setError(null);
+            localStorage.setItem('loggedInUserId', data.id);
+            // setAuthError(null); // Removed
+            enqueueSnackbar('Pomyślnie zalogowano!', { variant: 'success' });
         },
         onError: (err) => {
-            setError(err.message || "Logowanie nie powiodło się.");
+            const errorMessage = err.message || "Logowanie nie powiodło się. Sprawdź email i hasło.";
+            enqueueSnackbar(errorMessage, { variant: 'error' });
             setLoggedInUserId(null);
+            localStorage.removeItem('loggedInUserId');
         },
     });
 
     const registerMutation = useMutation({
         mutationFn: registerUser,
         onSuccess: (data) => {
-            // console.log("Registration successful:", data); // Usunięto log
-            setError(null);
+            // setAuthError(null); // Removed
+            enqueueSnackbar('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', { variant: 'success' });
         },
         onError: (err) => {
-            setError(err.message || "Rejestracja nie powiodła się.");
+            const errorMessage = err.message || "Rejestracja nie powiodła się.";
+            // Don't set authError, rely on Notistack and local form error handling in Register.jsx
+            enqueueSnackbar(errorMessage, { variant: 'error' });
         },
     });
 
     const login = useCallback(async (credentials) => {
-        setError(null);
+        // setAuthError(null); // Removed
+        // Error handling relies on mutation's onError and Notistack
         await loginMutation.mutateAsync(credentials);
     }, [loginMutation]);
 
     const logout = useCallback(() => {
-        // console.log("Wylogowywanie"); // Usunięto log
+        const userIdToClear = loggedInUserId;
         setLoggedInUserId(null);
-        queryClient.removeQueries({queryKey: ['user', loggedInUserId], exact: true});
-    }, [queryClient, loggedInUserId]);
+        localStorage.removeItem('loggedInUserId');
+        queryClient.removeQueries({ queryKey: ['user', userIdToClear], exact: true });
+        enqueueSnackbar('Pomyślnie wylogowano.', { variant: 'info' });
+    }, [queryClient, loggedInUserId, enqueueSnackbar]);
 
     const register = useCallback(async (userData) => {
-        setError(null);
+        // setAuthError(null); // Removed
+        // Error handling relies on mutation's onError, Notistack, and local form handling
         await registerMutation.mutateAsync(userData);
     }, [registerMutation]);
 
-    const clearError = useCallback(() => {
-        setError(null);
-        loginMutation.reset();
-        registerMutation.reset();
-    }, [loginMutation, registerMutation]);
+    // Removed clearError function as authError state is removed
+    // const clearError = useCallback(() => {
+    //   setAuthError(null);
+    // }, []);
 
     const isLoggedIn = !!loggedInUserId && !!currentUser;
     const isLoading = loginMutation.isPending || registerMutation.isPending || (!!loggedInUserId && isLoadingUser);
 
     useEffect(() => {
         if (isUserQueryError) {
-            // console.error("Error fetching user data:", userQueryError); // Zostawiono error
-            setError("Nie udało się pobrać danych użytkownika. Spróbuj odświeżyć stronę.");
+            console.error("Error fetching user data:", userQueryError);
+            // Consider if automatic logout is desired here upon critical user data fetch failure
+            // logout();
         }
-    }, [isUserQueryError, userQueryError]); // Dodano userQueryError do zależności
+    }, [isUserQueryError, userQueryError]);
 
     const value = useMemo(() => ({
         currentUser,
         isLoggedIn,
         isLoading,
-        error,
+        // error: authError, // Removed error state from value
         login,
         logout,
         register,
-        clearError,
+        // clearError, // Removed clearError from value
         isLoggingIn: loginMutation.isPending,
         isRegistering: registerMutation.isPending,
         isLoadingUser: !!loggedInUserId && isLoadingUser,
     }), [
-        currentUser, isLoggedIn, isLoading, error,
-        login, logout, register, clearError,
+        currentUser, isLoggedIn, isLoading, /* authError removed */
+        login, logout, register, /* clearError removed */
         loginMutation.isPending, registerMutation.isPending,
         loggedInUserId, isLoadingUser
     ]);
-
-    useEffect(() => {
-        // Logika sprawdzania tokena
-    }, []);
 
     return (
         <AuthContext.Provider value={value}>

@@ -23,7 +23,6 @@ const MobileMenu = ({ isOpen, onClose, isLoggedIn, onLoginClick, onRegisterClick
         );
     };
 
-    // Funkcja obsługująca kliknięcie: wykonuje akcję (jeśli jest) i zamyka menu
     const handleLinkClick = (action) => {
         if (action) {
             action();
@@ -75,15 +74,17 @@ const MobileMenu = ({ isOpen, onClose, isLoggedIn, onLoginClick, onRegisterClick
                                 {/* Linki Nawigacyjne */}
                                 <div className="relative mt-6 flex-1 px-4 sm:px-6 border-t border-pokemon-gray-medium dark:border-pokemon-gray-dark pt-4">
                                     <nav className="flex flex-col space-y-1">
+                                        {/* Link Pokedex - zawsze widoczny */}
+                                        <Link to="/" className={getMobileNavLinkClasses('/')} onClick={onClose}>Pokedex</Link>
+
+                                        {/* Linki/Przyciski zależne od stanu zalogowania */}
                                         {isLoggedIn ? (
                                             <>
-                                                <Link to="/" className={getMobileNavLinkClasses('/')} onClick={onClose}>Pokedex</Link>
+                                                {/* Usunięto zduplikowany Link to="/" */}
                                                 <Link to="/favourites" className={getMobileNavLinkClasses('/favourites')} onClick={onClose}>Ulubione</Link>
                                                 <Link to="/arena" className={getMobileNavLinkClasses('/arena')} onClick={onClose}>Arena</Link>
-                                                {/* Dodano link do Rankingu */}
                                                 <Link to="/ranking" className={getMobileNavLinkClasses('/ranking')} onClick={onClose}>Ranking</Link>
-                                                {/* Usunięto link do Edycji */}
-                                                {/* <Link to="/edit" className={getMobileNavLinkClasses('/edit')} onClick={onClose}>Edycja</Link> */}
+                                                <Link to="/edit" className={getMobileNavLinkClasses('/edit')} onClick={onClose}>Edycja</Link>
                                                 <button
                                                     onClick={() => handleLinkClick(onLogoutClick)}
                                                     className={clsx(mobileLinkBaseStyle, mobileLinkInactiveStyle, "text-left w-full")}
@@ -93,7 +94,7 @@ const MobileMenu = ({ isOpen, onClose, isLoggedIn, onLoginClick, onRegisterClick
                                             </>
                                         ) : (
                                             <>
-                                                <Link to="/" className={getMobileNavLinkClasses('/')} onClick={onClose}>Pokedex</Link>
+                                                {/* Usunięto zduplikowany Link to="/" */}
                                                 <button
                                                     onClick={() => handleLinkClick(onLoginClick)}
                                                     className={clsx(mobileLinkBaseStyle, mobileLinkInactiveStyle, "text-left w-full")}

@@ -69,7 +69,6 @@ const MainNav = () => {
                 Arena
             </Link>
 
-            {/* Dodano link do Rankingu */}
             <Link
                 to="/ranking"
                 className={getNavLinkClasses('/ranking')}
@@ -78,14 +77,14 @@ const MainNav = () => {
                 Ranking
             </Link>
 
-            {/* Usunięto link do Edycji (zgodnie z harmonogramem jeszcze nie istnieje?) */}
-            {/* <Link
+            {/* Dodany link do Edycji */}
+            <Link
                 to="/edit"
                 className={getNavLinkClasses('/edit')}
                 aria-current={currentPath === '/edit' ? 'page' : undefined}
             >
                 Edycja
-            </Link> */}
+            </Link>
 
             <button
                 onClick={handleLogout}

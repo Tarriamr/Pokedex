@@ -1,15 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { getPokemonImageUrl } from '../../services/api/pokemon';
 
-// Współdzielony komponent Karty Pokemona
-const PokemonCard = ({pokemon, onClick, userStats}) => {
-    const stats = userStats ? userStats[String(pokemon.id)] : null;
-    const displayBaseExperience = stats?.modified_base_experience ?? pokemon.base_experience ?? 0;
+const PokemonCard = ({ pokemon, onClick, userStats }) => {
+    const pokemonIdStr = String(pokemon.id);
+    const stats = userStats ? userStats[pokemonIdStr] : null;
+
+    // Użyj zmodyfikowanych wartości jeśli istnieją, w przeciwnym razie bazowych
+    const displayBaseExperience = stats?.modified_base_experience ?? stats?.base_experience ?? pokemon.base_experience ?? 0;
+    const displayHeight = stats?.height ?? pokemon.height ?? 0;
+    const displayWeight = stats?.weight ?? pokemon.weight ?? 0;
+
+    // Generuj URL obrazka dynamicznie
+    const imageUrl = getPokemonImageUrl(pokemon.id);
 
     return (
         <div
-            // Usunięto key={pokemon.id} - powinien być ustawiany w .map()
             className={clsx(
                 "rounded-lg shadow-md p-4 transition-all duration-300 ease-in-out cursor-pointer relative",
                 "bg-white border border-pokemon-gray-medium",
@@ -17,10 +24,11 @@ const PokemonCard = ({pokemon, onClick, userStats}) => {
                 "dark:bg-gray-800 dark:border-gray-700",
                 "dark:hover:border-pokemon-red dark:hover:shadow-lg",
                 "flex flex-col items-center text-center",
-                "box-border w-full min-h-80"
+                "box-border w-full min-h-72"
             )}
-            onClick={() => onClick(pokemon.id)} // Przekazujemy ID do handlera
+            onClick={() => onClick(pokemon.id)}
         >
+            {/* Statystyki Wygrane/Przegrane */}
             {stats && (stats.wins > 0 || stats.losses > 0) && (
                 <div className={clsx(
                     "absolute top-1 left-1 px-1.5 py-0.5 rounded text-xs z-10",
@@ -30,36 +38,52 @@ const PokemonCard = ({pokemon, onClick, userStats}) => {
                 </div>
             )}
 
+            {/* Obrazek i Nazwa - usunięto mb-3 z img */}
             <div className="flex flex-col items-center flex-grow mt-2">
                 <img
-                    // Używamy /src/... jako ścieżki bazowej dla zasobów statycznych w Vite
-                    src={pokemon.image || '/src/assets/pokeball.svg'}
+                    src={imageUrl}
                     alt={pokemon.name}
-                    className="w-32 h-32 object-contain mb-3"
+                    className="w-32 h-32 object-contain" // Usunięto mb-3
                     loading="lazy"
+                    onError={(e) => { e.target.onerror = null; e.target.src = '/src/assets/pokeball.svg'; }}
                 />
                 <h2 className={clsx(
-                    "text-lg font-semibold capitalize mb-2 transition-colors duration-300 ease-in-out",
+                    "text-lg font-semibold capitalize mb-2 transition-colors duration-300 ease-in-out", // Zachowano mb-2 dla odstępu poniżej
                     "text-pokemon-gray-darker dark:text-pokemon-gray-light",
                     "flex items-center justify-center",
                     "overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]",
                 )}>{pokemon.name}</h2>
             </div>
+
+            {/* Sekcja statystyk */}
             <div className={clsx(
-                "text-xs w-full grid grid-cols-2 gap-x-2 transition-colors duration-300 ease-in-out",
+                "w-full grid grid-cols-2 gap-x-2 gap-y-2 transition-colors duration-300 ease-in-out",
                 "text-pokemon-gray-dark dark:text-pokemon-gray-light",
-                "mt-auto min-h-16 border-t border-pokemon-gray-medium dark:border-gray-700 pt-2"
+                "mt-auto border-t border-pokemon-gray-medium dark:border-gray-700"
             )}>
-                <p><strong className="font-medium">Height:</strong> {pokemon.height}m</p>
-                <p>
-                    <strong className="font-medium">Exp:</strong> {displayBaseExperience}
-                    {(stats?.modified_base_experience && stats.modified_base_experience !== pokemon.base_experience) &&
-                        <span className="text-xs text-pokemon-green dark:text-pokemon-green-light ml-1">*</span>
-                    }
-                </p>
-                <p><strong className="font-medium">Weight:</strong> {pokemon.weight}kg</p>
-                <p><strong className="font-medium">Ability:</strong> {pokemon.abilities?.[0]?.ability?.name || 'N/A'}
-                </p>
+                {/* Height */}
+                <div className="text-center">
+                    <span className="text-[11px]">{displayHeight != null ? `${displayHeight.toFixed(1)}m` : 'N/A'}</span>
+                    <strong className="block font-bold text-xs">Height</strong>
+                </div>
+
+                {/* Base experience */}
+                <div className="text-center">
+                    <span className="text-[11px]">{displayBaseExperience ?? 'N/A'}</span>
+                    <strong className="block font-bold text-xs">Base experience</strong>
+                </div>
+
+                {/* Weight */}
+                <div className="text-center">
+                    <span className="text-[11px]">{displayWeight != null ? `${displayWeight.toFixed(1)}kg` : 'N/A'}</span>
+                    <strong className="block font-bold text-xs">Weight</strong>
+                </div>
+
+                {/* Ability */}
+                <div className="text-center">
+                    <span className="capitalize text-[11px]">{pokemon.abilities?.[0]?.ability?.name || 'N/A'}</span>
+                    <strong className="block font-bold text-xs">Ability</strong>
+                </div>
             </div>
         </div>
     );
@@ -69,7 +93,6 @@ PokemonCard.propTypes = {
     pokemon: PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         name: PropTypes.string.isRequired,
-        image: PropTypes.string,
         height: PropTypes.number,
         weight: PropTypes.number,
         base_experience: PropTypes.number,

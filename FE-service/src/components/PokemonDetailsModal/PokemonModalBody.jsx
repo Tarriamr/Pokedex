@@ -1,88 +1,72 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx'; // Import clsx for conditional classes
 
-// Komponent dla sekcji body w modalu (Info, Umiejętności, Statystyki)
-const PokemonModalBody = ({pokemonDetails, userPokemonStats}) => {
+// Komponent dla sekcji body w modalu
+const PokemonModalBody = ({ pokemonDetails }) => {
     if (!pokemonDetails) return null;
 
-    const displayBaseExperience = userPokemonStats?.modified_base_experience ?? pokemonDetails.base_experience;
+    // Dane do wyświetlenia (biorąc pod uwagę modyfikacje z hooka)
+    const displayHeight = pokemonDetails.height;
+    const displayWeight = pokemonDetails.weight;
+    const displayBaseExperience = pokemonDetails.base_experience;
+    const firstAbilityName = pokemonDetails.abilities?.[0]?.ability?.name;
 
-    // Helper do formatowania nazw statystyk
-    const formatStatName = (statName) => {
-        return statName.replace('-', ' ');
+    // Helper do formatowania nazw (np. usuwanie myślników w nazwach umiejętności)
+    const formatName = (name) => {
+        return name ? name.replace('-', ' ') : 'N/A';
     };
 
     return (
-        <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-pokemon-gray-darker dark:text-pokemon-gray-light">
-            {/* Kolumna Info */}
-            <div className="space-y-1">
-                <h3 className="text-lg font-semibold mb-1 border-b border-pokemon-gray-medium dark:border-pokemon-gray-dark pb-1">Informacje</h3>
-                <p><strong>Wzrost:</strong> {pokemonDetails.height != null ? `${pokemonDetails.height} m` : 'N/A'}</p>
-                <p><strong>Waga:</strong> {pokemonDetails.weight != null ? `${pokemonDetails.weight} kg` : 'N/A'}</p>
-                <p><strong>Dośw. bazowe:</strong> {displayBaseExperience ?? 'N/A'}
-                    {userPokemonStats?.modified_base_experience !== undefined &&
-                        userPokemonStats.modified_base_experience !== pokemonDetails.base_experience && (
-                            <span
-                                className="text-xs text-pokemon-green dark:text-pokemon-green-light ml-1">(Zmodyfikowane)</span>
-                        )}
-                </p>
-            </div>
+        // Używamy siatki 2x2 dla wszystkich atrybutów
+        <div className={clsx(
+            "grid grid-cols-2 gap-x-4 gap-y-2", // Siatka 2x2 z odstępami
+            "text-sm text-pokemon-gray-darker dark:text-pokemon-gray-light"
+        )}>
+            {/* Height */}
+            <p>
+                <strong className="font-semibold">Height:</strong>
+                {displayHeight != null ? ` ${displayHeight.toFixed(1)} m` : ' N/A'}
+                {/* Gwiazdka usunięta */}
+            </p>
 
-            {/* Kolumna Umiejętności */}
-            <div className="space-y-1">
-                <h3 className="text-lg font-semibold mb-1 border-b border-pokemon-gray-medium dark:border-pokemon-gray-dark pb-1">Umiejętności</h3>
-                {pokemonDetails.abilities?.length > 0 ? (
-                    <ul className="list-disc list-inside pl-1">
-                        {pokemonDetails.abilities.map(abilityInfo => (
-                            <li key={abilityInfo.ability.name} className="capitalize">
-                                {formatStatName(abilityInfo.ability.name)}
-                                {abilityInfo.is_hidden && <span
-                                    className="text-xs text-pokemon-blue-dark dark:text-pokemon-blue-light ml-1">(ukryta)</span>}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Brak informacji o umiejętnościach.</p>
-                )}
-            </div>
+            {/* Weight */}
+            <p>
+                <strong className="font-semibold">Weight:</strong>
+                {displayWeight != null ? ` ${displayWeight.toFixed(1)} kg` : ' N/A'}
+                {/* Gwiazdka usunięta */}
+            </p>
 
-            {/* Sekcja Statystyki (pełna szerokość) */}
-            <div className="md:col-span-2 space-y-1 mt-2">
-                <h3 className="text-lg font-semibold mb-1 border-b border-pokemon-gray-medium dark:border-pokemon-gray-dark pb-1">Statystyki
-                    Bazowe</h3>
-                {pokemonDetails.stats && Object.keys(pokemonDetails.stats).length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1">
-                        {Object.entries(pokemonDetails.stats).map(([statName, baseStat]) => (
-                            <div key={statName} className="flex justify-between capitalize">
-                                <span>{formatStatName(statName)}:</span>
-                                <strong>{baseStat ?? 'N/A'}</strong>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p>Brak informacji o statystykach.</p>
-                )}
-            </div>
+            {/* Base experience */}
+            <p>
+                <strong className="font-semibold">Base experience:</strong>
+                {displayBaseExperience != null ? ` ${displayBaseExperience}` : ' N/A'}
+                {/* Gwiazdka i info o bazowym już usunięte wcześniej */}
+            </p>
+
+            {/* Ability */}
+            <p>
+                <strong className="font-semibold">Ability:</strong>
+                <span className="capitalize"> {formatName(firstAbilityName)}</span>
+            </p>
         </div>
     );
 };
 
 PokemonModalBody.propTypes = {
     pokemonDetails: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         height: PropTypes.number,
         weight: PropTypes.number,
         base_experience: PropTypes.number,
         abilities: PropTypes.arrayOf(PropTypes.shape({
-            ability: PropTypes.shape({name: PropTypes.string.isRequired}).isRequired,
+            ability: PropTypes.shape({ name: PropTypes.string.isRequired }).isRequired,
             is_hidden: PropTypes.bool.isRequired,
         })),
-        stats: PropTypes.objectOf(PropTypes.number),
-    }),
-    userPokemonStats: PropTypes.shape({
-        modified_base_experience: PropTypes.number,
-        wins: PropTypes.number,
-        losses: PropTypes.number,
+        // Pola API do porównania (nie są już wyświetlane jako gwiazdki)
+        api_height: PropTypes.number,
+        api_weight: PropTypes.number,
+        api_base_experience: PropTypes.number,
     }),
 };
 

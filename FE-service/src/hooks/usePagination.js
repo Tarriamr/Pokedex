@@ -1,5 +1,5 @@
-import {useCallback, useMemo, useState} from 'react';
-import {POKEMONS_PER_PAGE} from '../config/constants'; // Import domyślnej wartości
+import { useState, useMemo, useCallback } from 'react';
+import { POKEMONS_PER_PAGE } from '../config/constants'; // Import domyślnej wartości
 
 export const usePagination = (totalItems = 0, itemsPerPage = POKEMONS_PER_PAGE) => {
     const [currentPage, setCurrentPage] = useState(1);

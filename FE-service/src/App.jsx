@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react'; // Removed useEffect import
 import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 import clsx from 'clsx';
 import PokemonList from './subpages/home/PokemonList';
@@ -8,8 +8,8 @@ import Login from './subpages/login/Login';
 import Register from './subpages/register/Register';
 import FavouritesPage from './subpages/favourites/FavouritesPage';
 import ArenaPage from './subpages/arena/ArenaPage';
-import RankingPage from './subpages/ranking/RankingPage'; // Import strony rankingu
-import { useTheme } from "./context/ThemeContext.jsx";
+import RankingPage from './subpages/ranking/RankingPage';
+import EditPage from './subpages/edit/EditPage';
 import { useAuth } from './context/AuthContext.jsx';
 import Logo from './components/Logo/Logo.jsx';
 import ThemeToggleButton from './components/ThemeToggleButton/ThemeToggleButton.jsx';
@@ -17,25 +17,16 @@ import { UserCircleIcon, Bars3Icon } from '@heroicons/react/24/solid';
 import MobileMenu from './components/Navigation/MobileMenu.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
-// --- Komponenty-Pośredniki --- //
-const LoginRedirectHandler = ({ openModal }) => {
-    const navigate = useNavigate();
-    useEffect(() => { openModal(); navigate('/', { replace: true }); }, [openModal, navigate]);
-    return null;
-};
-const RegisterRedirectHandler = ({ openModal }) => {
-    const navigate = useNavigate();
-    useEffect(() => { openModal(); navigate('/', { replace: true }); }, [openModal, navigate]);
-    return null;
-};
+// Comments about removed handlers removed
 
-// --- Główny komponent App --- //
 const App = () => {
-    const { isLoggedIn, currentUser, logout } = useAuth();
-    const { theme } = useTheme();
+    const { isLoggedIn, currentUser, logout, isLoading: isAuthLoading } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+    const navigate = useNavigate();
+
+    // Modal control functions
     const openLoginModal = () => setIsLoginModalOpen(true);
     const closeLoginModal = () => setIsLoginModalOpen(false);
     const openRegisterModal = () => setIsRegisterModalOpen(true);
@@ -44,15 +35,24 @@ const App = () => {
     const switchToRegisterModal = () => { closeLoginModal(); openRegisterModal(); };
     const handleOpenLoginModal = () => { setIsMobileMenuOpen(false); openLoginModal(); };
     const handleOpenRegisterModal = () => { setIsMobileMenuOpen(false); openRegisterModal(); };
-    const handleLogout = () => { setIsMobileMenuOpen(false); logout(); };
+    const handleLogout = () => { setIsMobileMenuOpen(false); logout(); navigate('/'); };
+
+    if (isAuthLoading) {
+        return (
+            <div className="h-screen flex justify-center items-center bg-pokemon-neutral-sand dark:bg-pokemon-gray-darker">
+                <p className="text-xl text-pokemon-blue dark:text-pokemon-blue-light animate-pulse">Ładowanie aplikacji...</p>
+            </div>
+        );
+    }
 
     return (
         <div className={clsx(
-            "min-h-screen flex flex-col",
+            "h-screen flex flex-col",
             "transition-colors duration-300 ease-in-out",
             "bg-pokemon-neutral-sand dark:bg-pokemon-gray-darker",
             "text-pokemon-gray-darker dark:text-pokemon-gray-light"
         )}>
+            {/* Header */}
             <header className={clsx(
                 "shadow-md sticky top-0 z-40",
                 "transition-colors duration-300 ease-in-out",
@@ -61,6 +61,7 @@ const App = () => {
                 <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
                     <Logo />
                     <div className="flex items-center">
+                        {/* Desktop Navigation / User Info */}
                         <div className="hidden md:flex md:items-center md:space-x-4">
                             {isLoggedIn && currentUser ? (
                                 <div className="flex flex-col items-end">
@@ -78,6 +79,7 @@ const App = () => {
                                 </div>
                             )}
                         </div>
+                        {/* Mobile Menu Trigger / User Info */}
                         <div className="flex items-center space-x-2 md:hidden">
                             {isLoggedIn && currentUser && (
                                 <div className="flex items-center space-x-1">
@@ -92,6 +94,7 @@ const App = () => {
                 </nav>
             </header>
 
+            {/* Mobile Off-canvas Menu */}
             <MobileMenu
                 isOpen={isMobileMenuOpen}
                 onClose={() => setIsMobileMenuOpen(false)}
@@ -101,34 +104,37 @@ const App = () => {
                 onLogoutClick={handleLogout}
             />
 
-            <main className="flex-grow">
+            {/* Main Content Area with Routing */}
+            <main className="flex-grow overflow-y-auto">
                 <Routes>
-                    {/* Trasy publiczne */}
+                    {/* Public Route */}
                     <Route path="/" element={<div className="container mx-auto p-4"><PokemonList /></div>} />
-                    <Route path="/login" element={<LoginRedirectHandler openModal={openLoginModal} />} />
-                    <Route path="/register" element={<RegisterRedirectHandler openModal={openRegisterModal} />} />
 
-                    {/* Trasy chronione */}
+                    {/* Protected Routes */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="/favourites" element={<div className="container mx-auto p-4"><FavouritesPage /></div>} />
                         <Route path="/arena" element={<ArenaPage />} />
-                        {/* Dodano trasę dla Rankingu */}
-                        <Route path="/ranking" element={<div className="container mx-auto p-4"><RankingPage /></div>} />
+                        <Route path="/ranking" element={<div className="container mx-auto p-4 h-full"><RankingPage /></div>} />
+                        <Route path="/edit" element={<EditPage />} />
                     </Route>
 
+                    {/* Fallback Route */}
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </main>
 
+            {/* Footer */}
             <footer className={clsx(
-                "text-center p-3 mt-auto text-sm",
+                "text-center p-3 text-sm",
                 "transition-colors duration-300 ease-in-out",
                 "bg-pokemon-blue dark:bg-pokemon-blue-dark",
-                "text-pokemon-yellow-light dark:text-pokemon-yellow-light"
+                "text-pokemon-yellow-light dark:text-pokemon-yellow-light",
+                "flex-shrink-0"
             )}>
                 Pokedex Project &copy; {new Date().getFullYear()}
             </footer>
 
+            {/* Modals Rendered Here */}
             {isLoginModalOpen && <Login onClose={closeLoginModal} onSwitchToRegister={switchToRegisterModal} />}
             {isRegisterModalOpen && <Register onClose={closeRegisterModal} onSwitchToLogin={switchToLoginModal} />}
         </div>

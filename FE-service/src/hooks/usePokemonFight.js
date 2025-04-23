@@ -1,132 +1,153 @@
-import {useState} from 'react';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {useSnackbar} from 'notistack';
-import {updatePokemonStats} from '../services/api/auth.js';
-import {useAuth} from '../context/AuthContext.jsx';
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { updateUserPokemonStats } from '../services/api/pokemon.js';
+import { useAuth } from '../context/AuthContext.jsx';
+// Import the shared helper function
+import { safeGetNumber } from '../utils/numberUtils.js';
 
-// Function to calculate fight score, considering potential modified experience
+// Local helper removed
+
+// Funkcja obliczająca wynik walki
 const calculateFightScore = (pokemon, userStats) => {
-    if (!pokemon?.base_experience || !pokemon?.weight) return 0;
-    // Use modified base experience from userStats if available, otherwise use API base_experience
-    const baseExperience = userStats?.modified_base_experience ?? pokemon.base_experience;
-    // Ensure weight is treated as a number, default to 1 if missing/invalid
-    const weight = typeof pokemon.weight === 'number' ? pokemon.weight : 1;
-    return baseExperience * weight;
+    if (!pokemon) return 0;
+    const experience = userStats?.modified_base_experience ?? userStats?.base_experience ?? pokemon.base_experience;
+    const weight = userStats?.weight ?? pokemon.weight;
+
+    // Use the imported helper
+    const numExperience = safeGetNumber(experience);
+    const numWeight = safeGetNumber(weight);
+
+    if (numWeight === 0) return 0;
+
+    return numExperience * numWeight;
 };
 
 export const usePokemonFight = (pokemon1, pokemon2) => {
-    const {enqueueSnackbar} = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
     const queryClient = useQueryClient();
-    const {currentUser} = useAuth();
-    const [fightResult, setFightResult] = useState(null); // { winner: pokemon | null, loser: pokemon | null, draw: boolean }
+    const { currentUser } = useAuth();
+    const [fightResult, setFightResult] = useState(null);
+    const [isUpdatingStats, setIsUpdatingStats] = useState(false);
 
-    const updateStatsMutation = useMutation({
-        mutationFn: (statsUpdate) => {
+    const updateSinglePokemonStats = useMutation({
+        mutationFn: ({ pokemonId, statsToUpdate }) => {
             if (!currentUser) throw new Error("Użytkownik nie jest zalogowany");
-            // Fetch current user data to merge stats correctly
-            // Ensure we get the most recent data before mutation if possible, though stale data is often fine here
-            const userData = queryClient.getQueryData(['user', currentUser.id]);
-            const existingStats = userData?.pokemonStats || {};
-
-            // Deep merge might be safer if stats structure gets complex, but for now, shallow is likely fine
-            // Create a new object for the merged stats to avoid mutating the cache directly
-            const mergedStats = {...existingStats};
-            for (const pokemonId in statsUpdate) {
-                mergedStats[pokemonId] = {...(existingStats[pokemonId] || {}), ...statsUpdate[pokemonId]};
-            }
-
-            return updatePokemonStats(currentUser.id, mergedStats);
+            return updateUserPokemonStats(currentUser.id, pokemonId, statsToUpdate);
         },
-        onSuccess: (updatedUserData) => {
-            // Update the user query data in the cache with the response from the server
-            queryClient.setQueryData(['user', currentUser?.id], updatedUserData);
-            // Optionally invalidate user query if other components might need absolutely fresh data immediately
-            // queryClient.invalidateQueries({ queryKey: ['user', currentUser?.id] });
-            // Let's not invalidate here, onSuccess updates cache, which should be sufficient for ArenaPage
-            enqueueSnackbar('Statystyki walki zaktualizowane!', {variant: 'success'});
-        },
-        onError: (error) => {
-            // Use template literal correctly
-            enqueueSnackbar(`Błąd aktualizacji statystyk: ${error.message}`, {variant: 'error'});
+        onError: (error, variables) => {
+            console.error(`Error updating stats for Pokemon ID: ${variables.pokemonId}:`, error);
+            const errorMsg = error.response?.data?.message || error.message || "Unknown error";
+            enqueueSnackbar(`Błąd aktualizacji statystyk dla ${variables.pokemonId}: ${errorMsg}`, { variant: 'error' });
         },
     });
 
-    const performFight = () => {
-        // Ensure both Pokemon have data needed for fight calculation
-        if (!pokemon1?.id || !pokemon2?.id || !currentUser || typeof pokemon1.base_experience !== 'number' || typeof pokemon1.weight !== 'number' || typeof pokemon2.base_experience !== 'number' || typeof pokemon2.weight !== 'number') {
-            enqueueSnackbar('Nie można rozpocząć walki: brak kompletnych danych Pokemonów lub użytkownika.', {variant: 'warning'});
+    const performFight = async () => {
+        if (isUpdatingStats) {
+            enqueueSnackbar('Aktualizacja statystyk jest już w toku.', { variant: 'info' });
+            return;
+        }
+        if (!pokemon1?.id || !pokemon2?.id || !currentUser?.id) {
+            enqueueSnackbar('Nie można rozpocząć walki: Brak ID Pokémonów lub ID użytkownika.', { variant: 'warning' });
             return;
         }
 
-        // Fetch potentially updated user data right before the fight calculation
+        setIsUpdatingStats(true);
+        setFightResult(null);
+
         const userData = queryClient.getQueryData(['user', currentUser.id]);
-        const userStats = userData?.pokemonStats || {};
-        const id1 = String(pokemon1.id);
-        const id2 = String(pokemon2.id);
-        const stats1 = userStats[id1] || {wins: 0, losses: 0};
-        const stats2 = userStats[id2] || {wins: 0, losses: 0};
+        if (!userData) {
+            enqueueSnackbar('Błąd: Nie znaleziono danych użytkownika w cache.', { variant: 'error' });
+            setIsUpdatingStats(false);
+            return;
+        }
+        const userStats = userData.pokemonStats || {};
 
-        const score1 = calculateFightScore(pokemon1, stats1);
-        const score2 = calculateFightScore(pokemon2, stats2);
+        const pokemon1Id = String(pokemon1.id);
+        const pokemon2Id = String(pokemon2.id);
 
-        let result = {winner: null, loser: null, draw: false};
-        let statsUpdate = {};
+        const pokemon1Stats = { wins: 0, losses: 0, ...userStats[pokemon1Id] };
+        const pokemon2Stats = { wins: 0, losses: 0, ...userStats[pokemon2Id] };
 
-        // Get base experience, preferring modified if available
-        const baseExp1 = stats1.modified_base_experience ?? pokemon1.base_experience;
-        const baseExp2 = stats2.modified_base_experience ?? pokemon2.base_experience;
+        const pokemon1Score = calculateFightScore(pokemon1, pokemon1Stats);
+        const pokemon2Score = calculateFightScore(pokemon2, pokemon2Stats);
 
-        if (score1 > score2) {
-            result = {winner: pokemon1, loser: pokemon2, draw: false};
-            statsUpdate[id1] = {
-                wins: stats1.wins + 1,
-                losses: stats1.losses,
-                modified_base_experience: baseExp1 + 10, // Winner gets +10 exp
+        let result = { winner: null, loser: null, draw: false };
+        let mutation1Payload = null;
+        let mutation2Payload = null;
+
+        // Use imported helper
+        const pokemon1EffectiveExp = safeGetNumber(pokemon1Stats.modified_base_experience ?? pokemon1Stats.base_experience ?? pokemon1.base_experience);
+        const pokemon2EffectiveExp = safeGetNumber(pokemon2Stats.modified_base_experience ?? pokemon2Stats.base_experience ?? pokemon2.base_experience);
+
+        const isPokemon1Custom = pokemon1?.isCustom === true;
+        const isPokemon2Custom = pokemon2?.isCustom === true;
+
+        if (pokemon1Score > pokemon2Score) {
+            result = { winner: pokemon1, loser: pokemon2, draw: false };
+            const winnerUpdate = {
+                // Use imported helper
+                wins: safeGetNumber(pokemon1Stats.wins) + 1,
+                ...(isPokemon1Custom
+                    ? { base_experience: pokemon1EffectiveExp + 10 }
+                    : { modified_base_experience: pokemon1EffectiveExp + 10 })
             };
-            statsUpdate[id2] = {
-                wins: stats2.wins,
-                losses: stats2.losses + 1,
-                modified_base_experience: baseExp2, // Loser keeps their current exp
-            };
-            // Use template literal correctly
-            enqueueSnackbar(`${pokemon1.name} wygrywa!`, {variant: 'info'});
+            // Use imported helper
+            const loserUpdate = { losses: safeGetNumber(pokemon2Stats.losses) + 1 };
+            mutation1Payload = { pokemonId: pokemon1Id, statsToUpdate: winnerUpdate };
+            mutation2Payload = { pokemonId: pokemon2Id, statsToUpdate: loserUpdate };
 
-        } else if (score2 > score1) {
-            result = {winner: pokemon2, loser: pokemon1, draw: false};
-            statsUpdate[id1] = {
-                wins: stats1.wins,
-                losses: stats1.losses + 1,
-                modified_base_experience: baseExp1, // Loser keeps their current exp
+        } else if (pokemon2Score > pokemon1Score) {
+            result = { winner: pokemon2, loser: pokemon1, draw: false };
+            const winnerUpdate = {
+                // Use imported helper
+                wins: safeGetNumber(pokemon2Stats.wins) + 1,
+                ...(isPokemon2Custom
+                    ? { base_experience: pokemon2EffectiveExp + 10 }
+                    : { modified_base_experience: pokemon2EffectiveExp + 10 })
             };
-            statsUpdate[id2] = {
-                wins: stats2.wins + 1,
-                losses: stats2.losses,
-                modified_base_experience: baseExp2 + 10, // Winner gets +10 exp
-            };
-            // Use template literal correctly
-            enqueueSnackbar(`${pokemon2.name} wygrywa!`, {variant: 'info'});
+            // Use imported helper
+            const loserUpdate = { losses: safeGetNumber(pokemon1Stats.losses) + 1 };
+            mutation1Payload = { pokemonId: pokemon1Id, statsToUpdate: loserUpdate };
+            mutation2Payload = { pokemonId: pokemon2Id, statsToUpdate: winnerUpdate };
 
         } else {
-            result = {winner: null, loser: null, draw: true};
-            // Ensure stats objects exist even on draw, preserving modified exp
-            statsUpdate[id1] = {
-                ...stats1,
-                modified_base_experience: baseExp1, // Keep current exp
-            };
-            statsUpdate[id2] = {
-                ...stats2,
-                modified_base_experience: baseExp2, // Keep current exp
-            };
-            enqueueSnackbar('Remis! Statystyki nie uległy zmianie.', {variant: 'info'});
+            result = { winner: null, loser: null, draw: true };
         }
 
-        setFightResult(result); // Set visual result state immediately
+        setFightResult(result);
 
-        // Mutate stats. The mutation handles updating the cache on success.
-        updateStatsMutation.mutate(statsUpdate);
+        if (mutation1Payload && mutation2Payload) {
+            let finalUserData = null;
+            try {
+                const updatedUserData1 = await updateSinglePokemonStats.mutateAsync(mutation1Payload);
+                if (updatedUserData1) {
+                    queryClient.setQueryData(['user', currentUser?.id], updatedUserData1);
+                }
+
+                const updatedUserData2 = await updateSinglePokemonStats.mutateAsync(mutation2Payload);
+                if (updatedUserData2) {
+                    queryClient.setQueryData(['user', currentUser?.id], updatedUserData2);
+                    finalUserData = updatedUserData2;
+                }
+
+                if (finalUserData) {
+                    queryClient.invalidateQueries({ queryKey: ['user', currentUser.id] });
+                } else {
+                    console.warn("Final user data after mutations is missing, consider refetching or checking API response.");
+                    queryClient.invalidateQueries({ queryKey: ['user', currentUser.id] });
+                }
+
+            } catch (error) {
+                console.error('Error during sequential stat updates:', error);
+            } finally {
+                setIsUpdatingStats(false);
+            }
+        } else {
+            setIsUpdatingStats(false);
+        }
     };
 
-    // Function to reset the fight result, e.g., when leaving the arena or removing a pokemon
     const resetFightResult = () => {
         setFightResult(null);
     };
@@ -134,7 +155,7 @@ export const usePokemonFight = (pokemon1, pokemon2) => {
     return {
         performFight,
         fightResult,
-        isFighting: updateStatsMutation.isPending, // Reflect mutation loading state
+        isFighting: isUpdatingStats,
         resetFightResult,
     };
 };

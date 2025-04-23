@@ -1,12 +1,8 @@
 import apiClient from './apiClient';
+// Import the shared helper function
+import { _sanitizeUserData } from './apiUtils.js';
 
-// Helper function to remove password from user data
-const _sanitizeUserData = (user) => {
-    if (!user) return null;
-    // eslint-disable-next-line no-unused-vars
-    const { password, ...userData } = user;
-    return userData;
-};
+// Helper function removed from here
 
 // --- Authentication --- //
 
@@ -18,7 +14,7 @@ export const loginUser = async ({ email, password }) => {
             throw new Error("Użytkownik o podanym emailu nie istnieje.");
         }
         const user = users[0];
-        // WARNING: Plain text password comparison - ONLY for demo/mock API
+        // WARNING: Plain text password comparison - ONLY for demo/mock API!
         if (user.password !== password) {
             throw new Error("Nieprawidłowe hasło.");
         }
@@ -37,9 +33,9 @@ export const registerUser = async ({ name, email, password }) => {
         const newUser = {
             name,
             email,
-            password, // WARNING: Storing plain text password - ONLY for demo/mock API
+            password, // WARNING: Storing plain text password - ONLY for demo/mock API!
             preferences: {
-                theme: 'dark'
+                theme: 'dark' // Default theme
             },
             favoritePokemonIds: [],
             arenaPokemonIds: [],
@@ -52,10 +48,10 @@ export const registerUser = async ({ name, email, password }) => {
     }
 };
 
-// --- User Preferences & Data --- //
+// --- User Data --- //
 
 export const getUserData = async (userId) => {
-    if (!userId) throw new Error("User ID is required.");
+    if (!userId) throw new Error("Wymagane ID użytkownika.");
     try {
         const response = await apiClient.get(`/users/${userId}`);
         return _sanitizeUserData(response.data);
@@ -64,10 +60,10 @@ export const getUserData = async (userId) => {
     }
 };
 
-// --- User Specific Updates --- //
+// --- User Updates --- //
 
 export const updateUserPreferences = async (userId, preferences) => {
-    if (!userId) throw new Error("User ID is required.");
+    if (!userId) throw new Error("Wymagane ID użytkownika.");
     try {
         const response = await apiClient.patch(`/users/${userId}`, { preferences });
         return _sanitizeUserData(response.data);
@@ -77,37 +73,13 @@ export const updateUserPreferences = async (userId, preferences) => {
 };
 
 export const updateUserFavorites = async (userId, favoritePokemonIds) => {
-    if (!userId) throw new Error("User ID is required.");
-    if (!Array.isArray(favoritePokemonIds)) throw new Error("favoritePokemonIds must be an array.");
+    if (!userId) throw new Error("Wymagane ID użytkownika.");
+    if (!Array.isArray(favoritePokemonIds)) throw new Error("favoritePokemonIds musi być tablicą.");
     const stringFavoritePokemonIds = favoritePokemonIds.map(id => String(id));
     try {
         const response = await apiClient.patch(`/users/${userId}`, { favoritePokemonIds: stringFavoritePokemonIds });
         return _sanitizeUserData(response.data);
     } catch (error) {
         throw new Error(error?.message || "Nie udało się zaktualizować listy ulubionych.");
-    }
-};
-
-export const updateUserArena = async (userId, arenaPokemonIds) => {
-    if (!userId) throw new Error("User ID is required.");
-    if (!Array.isArray(arenaPokemonIds)) throw new Error("arenaPokemonIds must be an array.");
-    const stringArenaPokemonIds = arenaPokemonIds.map(id => String(id));
-    if (stringArenaPokemonIds.length > 2) throw new Error("Arena can hold a maximum of 2 Pokemon.");
-    try {
-        const response = await apiClient.patch(`/users/${userId}`, { arenaPokemonIds: stringArenaPokemonIds });
-        return _sanitizeUserData(response.data);
-    } catch (error) {
-        throw new Error(error?.message || "Nie udało się zaktualizować Pokemonów na Arenie.");
-    }
-};
-
-export const updatePokemonStats = async (userId, pokemonStats) => {
-    if (!userId) throw new Error("User ID is required.");
-    if (typeof pokemonStats !== 'object' || pokemonStats === null) throw new Error("pokemonStats must be an object.");
-    try {
-        const response = await apiClient.patch(`/users/${userId}`, { pokemonStats });
-        return _sanitizeUserData(response.data);
-    } catch (error) {
-        throw new Error(error?.message || "Nie udało się zaktualizować statystyk Pokemonów.");
     }
 };

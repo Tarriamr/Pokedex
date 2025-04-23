@@ -1,28 +1,29 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
-import {XMarkIcon} from '@heroicons/react/24/solid';
-import {useAuth} from '../../context/AuthContext';
-import FormInput from '../../shared/FormInput'; // Import reużywalnego komponentu
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { XMarkIcon } from '@heroicons/react/24/solid';
+import { useAuth } from '../../context/AuthContext.jsx';
+import FormInput from '../../shared/FormInput';
 import clsx from 'clsx';
 
 const loginSchema = z.object({
-    email: z.string().email({message: "Nieprawidłowy format adresu email"}).min(1, {message: "Email jest wymagany"}),
-    password: z.string().min(1, {message: "Hasło jest wymagane"}),
+    email: z.string().email({ message: "Nieprawidłowy format adresu email" }).min(1, { message: "Email jest wymagany" }),
+    password: z.string().min(1, { message: "Hasło jest wymagane" }),
 });
 
-const Login = ({onClose, onSwitchToRegister}) => {
-    const {login, isLoggedIn, error, isLoading, clearError} = useAuth();
+const Login = ({ onClose, onSwitchToRegister }) => {
+    // Removed clearError from destructuring as it's no longer provided by useAuth
+    const { login, isLoggedIn, isLoading } = useAuth();
 
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        formState: { errors },
     } = useForm({
         resolver: zodResolver(loginSchema),
-        defaultValues: {email: '', password: ''}
+        defaultValues: { email: '', password: '' }
     });
 
     useEffect(() => {
@@ -39,18 +40,13 @@ const Login = ({onClose, onSwitchToRegister}) => {
         }
     }, [isLoggedIn, onClose]);
 
-    // Clear error on component mount
-    useEffect(() => {
-        clearError();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // Removed the useEffect block that called clearError()
 
     const onSubmit = async (data) => {
         try {
             await login(data);
-            // On successful login, the isLoggedIn effect will trigger onClose
         } catch (err) {
-            // Error is handled by the error state from useAuth
+            // Obsługa błędów odbywa się w AuthContext za pomocą Notistack
         }
     };
 
@@ -84,21 +80,9 @@ const Login = ({onClose, onSwitchToRegister}) => {
                     <XMarkIcon className="h-6 w-6"/>
                 </button>
 
-                <h1 id="login-modal-title"
-                    className="text-3xl font-bold text-center text-pokemon-blue-dark dark:text-pokemon-blue-light mb-6">Logowanie</h1>
-
-                {/* Komunikat błędu z AuthContext */}
-                {error && (
-                    <div
-                        className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-900 dark:border-red-700 dark:text-red-200 px-4 py-3 rounded relative mb-4"
-                        role="alert">
-                        <strong className="font-bold">Błąd!</strong>
-                        <span className="block sm:inline"> {error}</span>
-                    </div>
-                )}
+                <h1 id="login-modal-title" className="text-3xl font-bold text-center text-pokemon-blue-dark dark:text-pokemon-blue-light mb-6">Logowanie</h1>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Użycie komponentu FormInput dla emaila */}
                     <FormInput
                         label="Email"
                         name="email"
@@ -109,7 +93,6 @@ const Login = ({onClose, onSwitchToRegister}) => {
                         autoComplete="email"
                         required
                     />
-                    {/* Użycie komponentu FormInput dla hasła */}
                     <FormInput
                         label="Hasło"
                         name="password"
@@ -122,16 +105,12 @@ const Login = ({onClose, onSwitchToRegister}) => {
                     />
 
                     <div>
-                        <button type="submit" disabled={isLoading}
-                                className={clsx("w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pokemon-yellow hover:bg-pokemon-yellow-dark", "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pokemon-yellow-dark", "disabled:opacity-50 disabled:cursor-not-allowed", "transition-colors duration-150 ease-in-out", "text-pokemon-blue-dark")}>
+                        <button type="submit" disabled={isLoading} className={clsx("w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pokemon-yellow hover:bg-pokemon-yellow-dark", "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pokemon-yellow-dark", "disabled:opacity-50 disabled:cursor-not-allowed", "transition-colors duration-150 ease-in-out", "text-pokemon-blue-dark")}>
                             {isLoading ? (
                                 <>
-                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-pokemon-blue-dark"
-                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor"
-                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-pokemon-blue-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                     Logowanie...
                                 </>
@@ -142,8 +121,7 @@ const Login = ({onClose, onSwitchToRegister}) => {
 
                 <p className="text-center mt-6 text-sm text-pokemon-gray-dark dark:text-pokemon-gray-light">
                     Nie masz konta?{' '}
-                    <button type="button" onClick={onSwitchToRegister}
-                            className="text-pokemon-blue hover:text-pokemon-blue-dark dark:text-pokemon-blue-light dark:hover:text-white font-semibold hover:underline focus:outline-none">
+                    <button type="button" onClick={onSwitchToRegister} className="text-pokemon-blue hover:text-pokemon-blue-dark dark:text-pokemon-blue-light dark:hover:text-white font-semibold hover:underline focus:outline-none">
                         Zarejestruj się
                     </button>
                 </p>
