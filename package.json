@@ -10,12 +10,14 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.5.3"
   },
   "scripts": {
     "reset": "cp \"./BE-service/backup/original_db.json\" ./BE-service/db.json",
     "FE-service": "npm run dev --workspace=FE-service",
     "BE-service": "npm run dev --workspace=BE-service",
-    "dev": "npm-run-all --parallel FE-service BE-service"
+    "dev": "npm-run-all --parallel FE-service BE-service",
+    "prettier": "prettier . --write"
   }
 }
