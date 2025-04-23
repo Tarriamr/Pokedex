@@ -13,7 +13,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-                {/* SnackbarProvider should wrap AuthProvider so useSnackbar works inside AuthContext */}
                 <SnackbarProvider
                     maxSnack={3}
                     anchorOrigin={{
@@ -28,7 +27,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                     </AuthProvider>
                 </SnackbarProvider>
             </BrowserRouter>
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
     </React.StrictMode>,
 );
