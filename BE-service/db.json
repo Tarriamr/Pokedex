@@ -9,7 +9,6 @@
         "theme": "light"
       },
       "favoritePokemonIds": [
-        "7",
         "25",
         "6",
         "9",
@@ -29,7 +28,8 @@
         "238",
         "234",
         "151",
-        "248"
+        "248",
+        "7"
       ],
       "arenaPokemonIds": [],
       "pokemonStats": {
@@ -78,12 +78,12 @@
           "modified_base_experience": 142
         },
         "9": {
-          "wins": 1,
+          "wins": 2,
           "losses": 12,
-          "modified_base_experience": 275
+          "modified_base_experience": 285
         },
         "10": {
-          "losses": 1
+          "losses": 2
         },
         "11": {
           "wins": 1,

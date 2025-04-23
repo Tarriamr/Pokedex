@@ -4,23 +4,6 @@ import clsx from "clsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 
-// Style podstawowe
-const buttonBaseStyle =
-  "px-4 py-2 rounded font-semibold shadow transition-colors duration-200 ease-in-out focus:outline-none text-sm";
-
-// Style dla nieaktywnych linków (z focus-visible)
-const inactiveNavLinkStyle =
-  "bg-pokemon-yellow text-pokemon-blue-dark hover:bg-pokemon-yellow-dark focus-visible:ring-2 focus-visible:ring-pokemon-yellow focus-visible:ring-offset-1";
-
-// Style dla AKTYWNEGO linku (ze stałym ringiem)
-const activeNavLinkStyle =
-  "bg-pokemon-yellow-dark text-pokemon-blue-dark font-bold ring-2 ring-pokemon-blue-dark ring-offset-1";
-
-// Style dla przycisku "Wyloguj" (z focus-visible)
-const logoutButtonBaseBgTextStyle = "bg-pokemon-gray-dark text-white";
-const logoutButtonHoverFocusStyle =
-  "hover:bg-pokemon-gray-darker focus-visible:ring-2 focus-visible:ring-pokemon-gray-dark focus-visible:ring-offset-1";
-
 const MainNav = () => {
   const { logout } = useAuth();
   const { theme } = useTheme();
@@ -31,20 +14,10 @@ const MainNav = () => {
     logout();
   };
 
-  // Klasy dla pierścienia (konturu) zależne od motywu - dla NIEAKTYWNYCH przycisków
-  const ringClass =
-    theme === "light"
-      ? "ring-1 ring-pokemon-blue-dark"
-      : "dark:ring-1 dark:ring-pokemon-yellow";
-
   // Funkcja pomocnicza do generowania klas dla linków nawigacyjnych
   const getNavLinkClasses = (path) => {
     const isActive = currentPath === path;
-    return clsx(
-      buttonBaseStyle,
-      isActive ? activeNavLinkStyle : inactiveNavLinkStyle,
-      !isActive && ringClass, // Dodaj ring tylko dla nieaktywnych
-    );
+    return styles.navLink(isActive, theme);
   };
 
   return (
@@ -90,15 +63,7 @@ const MainNav = () => {
         Edycja
       </Link>
 
-      <button
-        onClick={handleLogout}
-        className={clsx(
-          buttonBaseStyle,
-          logoutButtonBaseBgTextStyle,
-          logoutButtonHoverFocusStyle,
-          ringClass,
-        )}
-      >
+      <button onClick={handleLogout} className={styles.logout(theme)}>
         Wyloguj
       </button>
     </div>
@@ -106,3 +71,34 @@ const MainNav = () => {
 };
 
 export default MainNav;
+
+const styles = {
+  buttonBase:
+    "px-4 py-2 rounded font-semibold shadow transition-colors duration-200 ease-in-out focus:outline-none text-sm",
+  inactiveNavLink:
+    "bg-pokemon-yellow text-pokemon-blue-dark hover:bg-pokemon-yellow-dark focus-visible:ring-2 focus-visible:ring-pokemon-yellow focus-visible:ring-offset-1",
+  activeNavLinkStyle:
+    "bg-pokemon-yellow-dark text-pokemon-blue-dark font-bold ring-2 ring-pokemon-blue-dark ring-offset-1",
+  logoutButtonBase: "bg-pokemon-gray-dark text-white",
+  logoutButtonHoverFocus:
+    "hover:bg-pokemon-gray-darker focus-visible:ring-2 focus-visible:ring-pokemon-gray-dark focus-visible:ring-offset-1",
+  buttonOutline: (theme) =>
+    theme === "light"
+      ? "ring-1 ring-pokemon-blue-dark"
+      : "dark:ring-1 dark:ring-pokemon-yellow",
+
+  navLink: (isActive, theme) =>
+    clsx(
+      styles.buttonBase,
+      isActive ? styles.activeNavLinkStyle : styles.inactiveNavLink,
+      !isActive && styles.buttonOutline(theme), // Dodaj ring tylko dla nieaktywnych
+    ),
+
+  logout: (theme) =>
+    clsx(
+      styles.buttonBase,
+      styles.logoutButtonBase,
+      styles.logoutButtonHoverFocus,
+      styles.buttonOutline(theme),
+    ),
+};
