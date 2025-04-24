@@ -16,13 +16,9 @@ const ThemeToggleButton = () => {
       title={ariaLabel}
       className={clsx(
         "p-2 rounded-full transition-all duration-150 ease-in-out",
-        "focus:outline-none", // Usunięcie domyślnego outline
-        // Style wskaźnika fokusu tylko dla `focus-visible`
-        "focus-visible:ring-2 focus-visible:ring-offset-2",
-        // Kolory
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         "text-pokemon-yellow-light hover:text-white",
         "dark:text-pokemon-yellow-light dark:hover:text-white",
-        // Kolory wskaźnika fokusu
         "focus-visible:ring-pokemon-yellow focus-visible:ring-offset-pokemon-red dark:focus-visible:ring-offset-pokemon-red-dark",
         "active:scale-95 active:brightness-90",
         isUpdatingTheme && "opacity-50 cursor-not-allowed",

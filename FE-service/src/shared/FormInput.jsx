@@ -15,8 +15,7 @@ const FormInput = ({
   ...props
 }) => {
   const hasError = !!error;
-  // Destructure out any props that shouldn't be passed to the native input element
-  const { defaultValue, ...restProps } = props; // Example: defaultValue might be used by RHF, not the input itself
+  const { defaultValue, ...restProps } = props;
 
   return (
     <div>
@@ -33,18 +32,18 @@ const FormInput = ({
           name={name}
           type={type}
           placeholder={placeholder}
-          {...register(name)} // Register field with react-hook-form
+          {...register(name)}
           className={clsx(
             "block w-full rounded-md border-0 py-1.5 px-3 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 transition-colors duration-150 ease-in-out",
             hasError
               ? "text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500 dark:text-red-400 dark:ring-red-500 dark:placeholder:text-red-400/70 dark:focus:ring-red-600"
               : "text-gray-900 ring-gray-300 placeholder:text-gray-400 focus:ring-pokemon-blue dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:placeholder:text-gray-400 dark:focus:ring-pokemon-blue-light",
             "dark:focus:outline-none",
-            inputClassName, // Apply custom classes passed via props
+            inputClassName,
           )}
           aria-invalid={hasError}
           aria-describedby={hasError ? `${name}-error` : undefined}
-          {...restProps} // Pass remaining props like `min`, `step`, etc.
+          {...restProps}
         />
         {hasError && (
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

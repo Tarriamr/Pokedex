@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ArenaSlot from "./ArenaSlot"; // Assuming ArenaSlot is moved to this directory
+import ArenaSlot from "./ArenaSlot";
 
 const ArenaSlotsContainer = ({
   pokemon1Data,
@@ -34,12 +34,12 @@ const ArenaSlotsContainer = ({
 };
 
 ArenaSlotsContainer.propTypes = {
-  pokemon1Data: PropTypes.object, // Combined data for slot 1
-  pokemon2Data: PropTypes.object, // Combined data for slot 2
-  fightResult: PropTypes.object, // Fight result object
+  pokemon1Data: PropTypes.object,
+  pokemon2Data: PropTypes.object,
+  fightResult: PropTypes.object,
   isFightInProgress: PropTypes.bool.isRequired,
   showResultDelayed: PropTypes.bool.isRequired,
-  onRemovePokemon: PropTypes.func.isRequired, // Callback when a Pokemon is removed
+  onRemovePokemon: PropTypes.func.isRequired,
 };
 
 export default ArenaSlotsContainer;

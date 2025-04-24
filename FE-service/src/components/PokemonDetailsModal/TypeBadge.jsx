@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 
-// Komponent do wyświetlania etykiety typu Pokemona
-// Wykorzystuje dynamiczne klasy tła zdefiniowane w tailwind.config.js
+// component for displaying pokemon type labels
+// uses dynamic background classes defined in tailwind.config.js
 const TypeBadge = ({ type }) => {
   if (!type) return null;
 
@@ -13,7 +13,7 @@ const TypeBadge = ({ type }) => {
     <span
       className={clsx(
         "px-3 py-1 rounded-full text-xs font-semibold capitalize text-white shadow",
-        typeClass, // Dynamiczna klasa tła
+        typeClass,
       )}
     >
       {type}

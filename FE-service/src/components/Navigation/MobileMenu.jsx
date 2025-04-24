@@ -6,7 +6,6 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Dialog } from "@headlessui/react";
 import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton.jsx";
 
-// Style linków mobilnych
 const mobileLinkBaseStyle =
   "block px-3 py-2 rounded-md text-base font-medium transition-colors duration-150 ease-in-out";
 const mobileLinkInactiveStyle =
@@ -92,7 +91,6 @@ const MobileMenu = ({
                 {/* Linki Nawigacyjne */}
                 <div className="relative mt-6 flex-1 px-4 sm:px-6 border-t border-pokemon-gray-medium dark:border-pokemon-gray-dark pt-4">
                   <nav className="flex flex-col space-y-1">
-                    {/* Link Pokedex - zawsze widoczny */}
                     <Link
                       to="/"
                       className={getMobileNavLinkClasses("/")}
@@ -104,7 +102,6 @@ const MobileMenu = ({
                     {/* Linki/Przyciski zależne od stanu zalogowania */}
                     {isLoggedIn ? (
                       <>
-                        {/* Usunięto zduplikowany Link to="/" */}
                         <Link
                           to="/favourites"
                           className={getMobileNavLinkClasses("/favourites")}
@@ -146,7 +143,6 @@ const MobileMenu = ({
                       </>
                     ) : (
                       <>
-                        {/* Usunięto zduplikowany Link to="/" */}
                         <button
                           onClick={() => handleLinkClick(onLoginClick)}
                           className={clsx(

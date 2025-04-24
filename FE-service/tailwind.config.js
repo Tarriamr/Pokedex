@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 
 // Helper function to convert HEX to RGB
 function hexToRgb(hex) {
@@ -10,7 +10,7 @@ function hexToRgb(hex) {
   return `${r}, ${g}, ${b}`; // Return as string "R, G, B"
 }
 
-// Define Pokemon type colors (mirrors the theme definition for easy access)
+// Define Pokemon type colors
 const pokemonTypeColors = {
   normal: "#A8A77A",
   fire: "#EE8130",
@@ -63,7 +63,6 @@ module.exports = {
     extend: {
       colors: {
         pokemon: {
-          // Podstawowe kolory (bez zmian)
           red: "#E3350D",
           "red-dark": "#B52A0B",
           blue: {
@@ -83,22 +82,17 @@ module.exports = {
             medium: "#E0E0E0",
             dark: "#757575",
             darker: "#424242",
-            // Kolor Normal jako fallback dla cienia
-            "type-fallback": "#A8A77A", // Używamy koloru Normal
+            "type-fallback": "#A8A77A",
           },
           "neutral-sand": "#F0EAD6",
 
-          // Kolory Typów Pokemon (bez zmian)
           type: pokemonTypeColors,
         },
       },
-      // --- DODANO/ZAKTUALIZOWANO SEKCJE BOX SHADOW ---
       boxShadow: {
-        ...pokemonTypeShadows, // Rozszerzenie o cienie typów
-        // Definicja fallbacku używającego koloru Normal
+        ...pokemonTypeShadows,
         "pokemon-gray-light": `0 0 25px 8px rgba(${hexToRgb(pokemonTypeColors.normal)}, 0.9)`,
       },
-      // --- KONIEC SEKCJI BOX SHADOW ---
     },
   },
   plugins: [],

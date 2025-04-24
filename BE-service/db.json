@@ -298,36 +298,24 @@
       "email": "misty@pokemon.com",
       "password": "staryu",
       "preferences": {
-        "theme": "light"
+        "theme": "dark"
       },
-      "favoritePokemonIds": [],
+      "favoritePokemonIds": [
+        "13",
+        "14"
+      ],
       "arenaPokemonIds": [],
-      "pokemonStats": {}
-    },
-    {
-      "name": "Jan Nowak",
-      "email": "jn@pokemon.com",
-      "password": "Pikachu!1",
-      "preferences": {
-        "theme": "light"
-      },
-      "favoritePokemonIds": [],
-      "arenaPokemonIds": [],
-      "pokemonStats": {},
-      "id": "a8EqESA"
-    },
-    {
-      "name": "Jan",
-      "email": "jan@pokemon.com",
-      "password": "Pikachu!1",
-      "preferences": {
-        "theme": "light"
-      },
-      "favoritePokemonIds": [],
-      "arenaPokemonIds": [],
-      "pokemonStats": {},
-      "id": "0v2gIRG"
+      "pokemonStats": {
+        "245": {
+          "name": "Koń Wodny",
+          "isCustom": true,
+          "height": 0.8,
+          "weight": 40,
+          "base_experience": 150,
+          "wins": 0,
+          "losses": 0
+        }
+      }
     }
-  ],
-  "pokemons": []
+  ]
 }

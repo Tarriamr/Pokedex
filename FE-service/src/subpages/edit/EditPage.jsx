@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import usePokemonList from "../../hooks/usePokemonList.jsx";
 import { POKEMON_API_LIMIT } from "../../config/constants";
@@ -6,8 +6,8 @@ import PokemonEditModal from "../../components/PokemonEditModal/PokemonEditModal
 import PokemonCreateModal from "../../components/PokemonCreateModal/PokemonCreateModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  updateUserPokemonStats,
   getPokemonImageUrl,
+  updateUserPokemonStats,
 } from "../../services/api/pokemon";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -33,11 +33,9 @@ const EditPage = () => {
 
   const sortedPokemonList = useMemo(() => {
     if (!combinedPokemonList) return [];
-    // Ensure sorting is numeric by ID
     return [...combinedPokemonList].sort((a, b) => a.id - b.id);
   }, [combinedPokemonList]);
 
-  // IDs of user's custom pokemon to prevent reusing their graphics
   const existingCustomIds = useMemo(() => {
     if (!currentUser?.pokemonStats) return [];
     return Object.keys(currentUser.pokemonStats)
@@ -66,7 +64,7 @@ const EditPage = () => {
       // Get the name for the message (from newData if creating, or existing data if editing)
       const rawPokemonName =
         variables.newData.name ||
-        selectedPokemonForEdit?.name || // Use name from selected pokemon if editing
+        selectedPokemonForEdit?.name ||
         sortedPokemonList?.find(
           (p) => String(p.id) === String(variables.pokemonId),
         )?.name ||
@@ -83,13 +81,12 @@ const EditPage = () => {
     },
     onError: (error) => {
       const errorMessage = `Błąd zapisu: ${error.message}`;
-      console.error("Error during save:", error); // Keep error log
+      console.error("Error during save:", error);
       enqueueSnackbar(errorMessage, { variant: "error" });
     },
   });
 
   // --- Render Logic ---
-
   if (isLoadingList)
     return (
       <div className="p-4 text-center text-xl text-pokemon-blue dark:text-pokemon-blue-light">
@@ -110,7 +107,6 @@ const EditPage = () => {
     );
 
   // --- Event Handlers ---
-
   const handleOpenEditModal = (pokemon) => {
     setSelectedPokemonForEdit(pokemon);
     setIsEditModalOpen(true);
@@ -136,11 +132,11 @@ const EditPage = () => {
         existingStats.modified_base_experience ??
           existingStats.base_experience ??
           originalPokemonData?.base_experience,
-      ) || 1; // Min 1
+      ) || 1;
     const originalHeight =
-      Number(existingStats.height ?? originalPokemonData?.height) || 0.1; // Min 0.1
+      Number(existingStats.height ?? originalPokemonData?.height) || 0.1;
     const originalWeight =
-      Number(existingStats.weight ?? originalPokemonData?.weight) || 0.1; // Min 0.1
+      Number(existingStats.weight ?? originalPokemonData?.weight) || 0.1;
 
     // Prepare the update payload
     const newData = {};
@@ -157,7 +153,7 @@ const EditPage = () => {
         newData.modified_base_experience = newExperience;
         // If base_experience exists in stats, remove it to avoid confusion
         if (existingStats.base_experience !== undefined) {
-          newData.base_experience = null; // Explicitly nullify if we start using modified
+          newData.base_experience = null;
         }
       } else {
         // For custom Pokemon, update the base experience directly
@@ -187,7 +183,7 @@ const EditPage = () => {
 
   // Handle saving a new custom Pokemon
   const handleSaveCreate = (formData) => {
-    const { id: basePokemonId, ...restData } = formData; // ID comes from selected graphic
+    const { id: basePokemonId, ...restData } = formData;
     const capitalizedName = capitalizeWords(restData.name);
 
     // Data to save in user's pokemonStats
@@ -204,7 +200,6 @@ const EditPage = () => {
     mutation.mutate({ pokemonId: String(basePokemonId), newData });
   };
 
-  // --- JSX ---
   return (
     <div className="p-4 container mx-auto flex flex-col h-full">
       {/* Header with Title and Create Button */}
@@ -215,20 +210,16 @@ const EditPage = () => {
         <button
           onClick={handleOpenCreateModal}
           className={clsx(
-            "px-4 py-2 bg-pokemon-green hover:bg-pokemon-green-dark text-white rounded shadow hover:shadow-md transition duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pokemon-yellow",
-            "md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2",
+            "px-4 py-2 bg-pokemon-green hover:bg-pokemon-green-dark text-white rounded shadow hover:shadow-md transition duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pokemon-yellow md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2",
           )}
         >
           Stwórz pokemona
         </button>
       </div>
 
-      {/* Pokemon List Table - Changed max-w-3xl to max-w-2xl */}
       <div
         className={clsx(
-          "flex-grow overflow-hidden shadow rounded-lg border border-pokemon-gray-medium dark:border-gray-700",
-          "mx-auto", // Center the table container
-          "w-full max-w-2xl", // Limit table width for better readability
+          "flex-grow overflow-hidden shadow rounded-lg border border-pokemon-gray-medium dark:border-gray-700 mx-auto w-full max-w-2xl",
         )}
       >
         <div className="h-full overflow-y-auto relative">
@@ -261,7 +252,6 @@ const EditPage = () => {
                   key={pokemon.id}
                   className="hover:bg-pokemon-gray-light/30 dark:hover:bg-pokemon-gray-darker/50 transition-colors duration-150 ease-in-out"
                 >
-                  {/* Wyświetlanie indexu + 1 jako numeracji */}
                   <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-pokemon-gray-dark dark:text-gray-400 text-right align-middle">
                     {index + 1}
                   </td>
@@ -324,5 +314,4 @@ const EditPage = () => {
     </div>
   );
 };
-
 export default EditPage;

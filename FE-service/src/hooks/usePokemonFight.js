@@ -3,12 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { updateUserPokemonStats } from "../services/api/pokemon.js";
 import { useAuth } from "../context/AuthContext.jsx";
-// Import the shared helper function
 import { safeGetNumber } from "../utils/numberUtils.js";
 
-// Local helper removed
-
-// Funkcja obliczająca wynik walki
 const calculateFightScore = (pokemon, userStats) => {
   if (!pokemon) return 0;
   const experience =
@@ -17,7 +13,6 @@ const calculateFightScore = (pokemon, userStats) => {
     pokemon.base_experience;
   const weight = userStats?.weight ?? pokemon.weight;
 
-  // Use the imported helper
   const numExperience = safeGetNumber(experience);
   const numWeight = safeGetNumber(weight);
 
@@ -93,7 +88,6 @@ export const usePokemonFight = (pokemon1, pokemon2) => {
     let mutation1Payload = null;
     let mutation2Payload = null;
 
-    // Use imported helper
     const pokemon1EffectiveExp = safeGetNumber(
       pokemon1Stats.modified_base_experience ??
         pokemon1Stats.base_experience ??
@@ -111,26 +105,22 @@ export const usePokemonFight = (pokemon1, pokemon2) => {
     if (pokemon1Score > pokemon2Score) {
       result = { winner: pokemon1, loser: pokemon2, draw: false };
       const winnerUpdate = {
-        // Use imported helper
         wins: safeGetNumber(pokemon1Stats.wins) + 1,
         ...(isPokemon1Custom
           ? { base_experience: pokemon1EffectiveExp + 10 }
           : { modified_base_experience: pokemon1EffectiveExp + 10 }),
       };
-      // Use imported helper
       const loserUpdate = { losses: safeGetNumber(pokemon2Stats.losses) + 1 };
       mutation1Payload = { pokemonId: pokemon1Id, statsToUpdate: winnerUpdate };
       mutation2Payload = { pokemonId: pokemon2Id, statsToUpdate: loserUpdate };
     } else if (pokemon2Score > pokemon1Score) {
       result = { winner: pokemon2, loser: pokemon1, draw: false };
       const winnerUpdate = {
-        // Use imported helper
         wins: safeGetNumber(pokemon2Stats.wins) + 1,
         ...(isPokemon2Custom
           ? { base_experience: pokemon2EffectiveExp + 10 }
           : { modified_base_experience: pokemon2EffectiveExp + 10 }),
       };
-      // Use imported helper
       const loserUpdate = { losses: safeGetNumber(pokemon1Stats.losses) + 1 };
       mutation1Payload = { pokemonId: pokemon1Id, statsToUpdate: loserUpdate };
       mutation2Payload = { pokemonId: pokemon2Id, statsToUpdate: winnerUpdate };

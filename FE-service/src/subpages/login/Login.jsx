@@ -17,7 +17,6 @@ const loginSchema = z.object({
 });
 
 const Login = ({ onClose, onSwitchToRegister }) => {
-  // Removed clearError from destructuring as it's no longer provided by useAuth
   const { login, isLoggedIn, isLoading } = useAuth();
 
   const {
@@ -42,16 +41,6 @@ const Login = ({ onClose, onSwitchToRegister }) => {
       onClose();
     }
   }, [isLoggedIn, onClose]);
-
-  // Removed the useEffect block that called clearError()
-
-  const onSubmit = async (data) => {
-    try {
-      await login(data);
-    } catch (err) {
-      // Obsługa błędów odbywa się w AuthContext za pomocą Notistack
-    }
-  };
 
   return (
     <div
@@ -90,7 +79,7 @@ const Login = ({ onClose, onSwitchToRegister }) => {
           Logowanie
         </h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(login)} className="space-y-4">
           <FormInput
             label="Email"
             name="email"

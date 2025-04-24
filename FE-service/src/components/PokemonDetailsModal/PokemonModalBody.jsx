@@ -1,27 +1,26 @@
 import React from "react";
 import PropTypes from "prop-types";
-import clsx from "clsx"; // Import clsx for conditional classes
+import clsx from "clsx";
 
-// Komponent dla sekcji body w modalu
+// Component for the Body Section in Modal
 const PokemonModalBody = ({ pokemonDetails }) => {
   if (!pokemonDetails) return null;
 
-  // Dane do wyświetlenia (biorąc pod uwagę modyfikacje z hooka)
+  // data to be displayed (taking into account Hook modifications)
   const displayHeight = pokemonDetails.height;
   const displayWeight = pokemonDetails.weight;
   const displayBaseExperience = pokemonDetails.base_experience;
   const firstAbilityName = pokemonDetails.abilities?.[0]?.ability?.name;
 
-  // Helper do formatowania nazw (np. usuwanie myślników w nazwach umiejętności)
+  // Helper for formatting names (e.g. removal of duties in skill names)
   const formatName = (name) => {
     return name ? name.replace("-", " ") : "N/A";
   };
 
   return (
-    // Używamy siatki 2x2 dla wszystkich atrybutów
     <div
       className={clsx(
-        "grid grid-cols-2 gap-x-4 gap-y-2", // Siatka 2x2 z odstępami
+        "grid grid-cols-2 gap-x-4 gap-y-2",
         "text-sm text-pokemon-gray-darker dark:text-pokemon-gray-light",
       )}
     >
@@ -29,23 +28,17 @@ const PokemonModalBody = ({ pokemonDetails }) => {
       <p>
         <strong className="font-semibold">Height:</strong>
         {displayHeight != null ? ` ${displayHeight.toFixed(1)} m` : " N/A"}
-        {/* Gwiazdka usunięta */}
       </p>
-
       {/* Weight */}
       <p>
         <strong className="font-semibold">Weight:</strong>
         {displayWeight != null ? ` ${displayWeight.toFixed(1)} kg` : " N/A"}
-        {/* Gwiazdka usunięta */}
       </p>
-
       {/* Base experience */}
       <p>
         <strong className="font-semibold">Base experience:</strong>
         {displayBaseExperience != null ? ` ${displayBaseExperience}` : " N/A"}
-        {/* Gwiazdka i info o bazowym już usunięte wcześniej */}
       </p>
-
       {/* Ability */}
       <p>
         <strong className="font-semibold">Ability:</strong>
@@ -68,7 +61,6 @@ PokemonModalBody.propTypes = {
         is_hidden: PropTypes.bool.isRequired,
       }),
     ),
-    // Pola API do porównania (nie są już wyświetlane jako gwiazdki)
     api_height: PropTypes.number,
     api_weight: PropTypes.number,
     api_base_experience: PropTypes.number,

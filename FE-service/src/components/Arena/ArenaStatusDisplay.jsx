@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import clsx from "clsx";
 
 // This component now ONLY handles the full overlay states (Loading, Error)
 const ArenaStatusDisplay = ({ isLoading, errorMessage }) => {
@@ -32,8 +31,7 @@ const ArenaStatusDisplay = ({ isLoading, errorMessage }) => {
 
 ArenaStatusDisplay.propTypes = {
   isLoading: PropTypes.bool.isRequired,
-  errorMessage: PropTypes.string, // Error message string or null
-  // Removed fightResultMessage and displayFightingState from props
+  errorMessage: PropTypes.string,
 };
 
 export default ArenaStatusDisplay;

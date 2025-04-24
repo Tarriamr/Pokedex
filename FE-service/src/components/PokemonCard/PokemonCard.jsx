@@ -7,7 +7,6 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
   const pokemonIdStr = String(pokemon.id);
   const stats = userStats ? userStats[pokemonIdStr] : null;
 
-  // Użyj zmodyfikowanych wartości jeśli istnieją, w przeciwnym razie bazowych
   const displayBaseExperience =
     stats?.modified_base_experience ??
     stats?.base_experience ??
@@ -16,7 +15,6 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
   const displayHeight = stats?.height ?? pokemon.height ?? 0;
   const displayWeight = stats?.weight ?? pokemon.weight ?? 0;
 
-  // Generuj URL obrazka dynamicznie
   const imageUrl = getPokemonImageUrl(pokemon.id);
 
   return (
@@ -32,7 +30,6 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
       )}
       onClick={() => onClick(pokemon.id)}
     >
-      {/* Statystyki Wygrane/Przegrane */}
       {stats && (stats.wins > 0 || stats.losses > 0) && (
         <div
           className={clsx(
@@ -44,12 +41,11 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
         </div>
       )}
 
-      {/* Obrazek i Nazwa - usunięto mb-3 z img */}
       <div className="flex flex-col items-center flex-grow mt-2">
         <img
           src={imageUrl}
           alt={pokemon.name}
-          className="w-32 h-32 object-contain" // Usunięto mb-3
+          className="w-32 h-32 object-contain"
           loading="lazy"
           onError={(e) => {
             e.target.onerror = null;
@@ -58,7 +54,7 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
         />
         <h2
           className={clsx(
-            "text-lg font-semibold capitalize mb-2 transition-colors duration-300 ease-in-out", // Zachowano mb-2 dla odstępu poniżej
+            "text-lg font-semibold capitalize mb-2 transition-colors duration-300 ease-in-out",
             "text-pokemon-gray-darker dark:text-pokemon-gray-light",
             "flex items-center justify-center",
             "overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]",
@@ -68,7 +64,6 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
         </h2>
       </div>
 
-      {/* Sekcja statystyk */}
       <div
         className={clsx(
           "w-full grid grid-cols-2 gap-x-2 gap-y-2 transition-colors duration-300 ease-in-out",
@@ -76,7 +71,6 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
           "mt-auto border-t border-pokemon-gray-medium dark:border-gray-700",
         )}
       >
-        {/* Height */}
         <div className="text-center">
           <span className="text-[11px]">
             {displayHeight != null ? `${displayHeight.toFixed(1)}m` : "N/A"}
@@ -84,13 +78,11 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
           <strong className="block font-bold text-xs">Height</strong>
         </div>
 
-        {/* Base experience */}
         <div className="text-center">
           <span className="text-[11px]">{displayBaseExperience ?? "N/A"}</span>
           <strong className="block font-bold text-xs">Base experience</strong>
         </div>
 
-        {/* Weight */}
         <div className="text-center">
           <span className="text-[11px]">
             {displayWeight != null ? `${displayWeight.toFixed(1)}kg` : "N/A"}
@@ -98,7 +90,6 @@ const PokemonCard = ({ pokemon, onClick, userStats }) => {
           <strong className="block font-bold text-xs">Weight</strong>
         </div>
 
-        {/* Ability */}
         <div className="text-center">
           <span className="capitalize text-[11px]">
             {pokemon.abilities?.[0]?.ability?.name || "N/A"}

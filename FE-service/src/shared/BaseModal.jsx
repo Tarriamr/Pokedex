@@ -10,10 +10,9 @@ const BaseModal = ({
   footerContent,
   imageUrl,
   imageAlt = "Image",
-  headerActions, // Actions on the left
+  headerActions,
   maxWidth = "max-w-md",
 }) => {
-  // Effect to handle Escape key press
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
@@ -26,7 +25,6 @@ const BaseModal = ({
     };
   }, [onClose]);
 
-  // Effect to handle background scroll lock
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -93,7 +91,7 @@ const BaseModal = ({
           </div>
         </div>
 
-        {/* Modal Body (Scrollable) - Reduced padding from p-6 to p-4 */}
+        {/* Modal Body (Scrollable) */}
         <div className="p-4 overflow-y-auto flex-grow">{children}</div>
 
         {/* Modal Footer (Optional) */}
@@ -114,7 +112,7 @@ BaseModal.propTypes = {
   footerContent: PropTypes.node,
   imageUrl: PropTypes.string,
   imageAlt: PropTypes.string,
-  headerActions: PropTypes.node, // Actions on the left
+  headerActions: PropTypes.node,
   maxWidth: PropTypes.string,
 };
 

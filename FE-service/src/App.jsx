@@ -1,4 +1,4 @@
-import React from "react"; // Removed useEffect import
+import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import clsx from "clsx";
 import PokemonList from "./subpages/home/PokemonList";
@@ -8,7 +8,7 @@ import RankingPage from "./subpages/ranking/RankingPage";
 import EditPage from "./subpages/edit/EditPage";
 import { useAuth } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import { Header } from "./Header.jsx";
+import { Header } from "./components/Pokedex/Header.jsx";
 
 const App = () => {
   const { isLoading } = useAuth();

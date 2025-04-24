@@ -15,11 +15,9 @@ const AuthContext = createContext({
   currentUser: null,
   isLoggedIn: false,
   isLoading: false,
-  // error: null, // Removed error from context value signature
   login: async () => {},
   logout: () => {},
   register: async () => {},
-  // clearError: () => {}, // Removed clearError
   isLoggingIn: false,
   isRegistering: false,
   isLoadingUser: false,
@@ -31,7 +29,6 @@ export const AuthProvider = ({ children }) => {
   const [loggedInUserId, setLoggedInUserId] = useState(() => {
     return localStorage.getItem("loggedInUserId");
   });
-  // const [authError, setAuthError] = useState(null); // Removed authError state
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -53,7 +50,6 @@ export const AuthProvider = ({ children }) => {
     onSuccess: (data) => {
       setLoggedInUserId(data.id);
       localStorage.setItem("loggedInUserId", data.id);
-      // setAuthError(null); // Removed
       enqueueSnackbar("Pomyślnie zalogowano!", { variant: "success" });
     },
     onError: (err) => {
@@ -68,7 +64,6 @@ export const AuthProvider = ({ children }) => {
   const registerMutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      // setAuthError(null); // Removed
       enqueueSnackbar(
         "Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.",
         { variant: "success" },
@@ -76,15 +71,12 @@ export const AuthProvider = ({ children }) => {
     },
     onError: (err) => {
       const errorMessage = err.message || "Rejestracja nie powiodła się.";
-      // Don't set authError, rely on Notistack and local form error handling in Register.jsx
       enqueueSnackbar(errorMessage, { variant: "error" });
     },
   });
 
   const login = useCallback(
     async (credentials) => {
-      // setAuthError(null); // Removed
-      // Error handling relies on mutation's onError and Notistack
       await loginMutation.mutateAsync(credentials);
     },
     [loginMutation],
@@ -103,17 +95,10 @@ export const AuthProvider = ({ children }) => {
 
   const register = useCallback(
     async (userData) => {
-      // setAuthError(null); // Removed
-      // Error handling relies on mutation's onError, Notistack, and local form handling
       await registerMutation.mutateAsync(userData);
     },
     [registerMutation],
   );
-
-  // Removed clearError function as authError state is removed
-  // const clearError = useCallback(() => {
-  //   setAuthError(null);
-  // }, []);
 
   const isLoggedIn = !!loggedInUserId && !!currentUser;
   const isLoading =
@@ -124,8 +109,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (isUserQueryError) {
       console.error("Error fetching user data:", userQueryError);
-      // Consider if automatic logout is desired here upon critical user data fetch failure
-      // logout();
     }
   }, [isUserQueryError, userQueryError]);
 
@@ -134,11 +117,9 @@ export const AuthProvider = ({ children }) => {
       currentUser,
       isLoggedIn,
       isLoading,
-      // error: authError, // Removed error state from value
       login,
       logout,
       register,
-      // clearError, // Removed clearError from value
       isLoggingIn: loginMutation.isPending,
       isRegistering: registerMutation.isPending,
       isLoadingUser: !!loggedInUserId && isLoadingUser,
@@ -146,10 +127,10 @@ export const AuthProvider = ({ children }) => {
     [
       currentUser,
       isLoggedIn,
-      isLoading /* authError removed */,
+      isLoading,
       login,
       logout,
-      register /* clearError removed */,
+      register,
       loginMutation.isPending,
       registerMutation.isPending,
       loggedInUserId,

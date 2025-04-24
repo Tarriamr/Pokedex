@@ -120,7 +120,6 @@ const RankingPage = () => {
     );
   }
 
-  // Helper function to format stat values for display
   const formatStatValue = (pokemon, statKey) => {
     const value = pokemon[statKey] ?? 0;
     if (statKey === "weight" || statKey === "height") {

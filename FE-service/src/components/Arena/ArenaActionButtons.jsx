@@ -1,13 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { Swords, LogOut } from "lucide-react";
+import { LogOut, Swords } from "lucide-react";
 
 const ArenaActionButtons = ({
   canFight,
   isFightInProgress,
   isMutatingStats,
-  showLeaveButton, // This prop now dictates if the LEAVE button is the primary action
+  showLeaveButton,
   isLeavingArena,
   onFight,
   onLeave,
@@ -19,7 +19,6 @@ const ArenaActionButtons = ({
   return (
     <div className="mb-4 h-16 flex items-center justify-center">
       {/* --- Leave Button --- */}
-      {/* Render Leave button if showLeaveButton is true */}
       {showLeaveButton && (
         <button
           onClick={onLeave}
@@ -66,7 +65,6 @@ const ArenaActionButtons = ({
       )}
 
       {/* --- Fighting State Indicator --- */}
-      {/* Render Fighting indicator only if NOT showing Leave button */}
       {!showLeaveButton && isFightInProgress && (
         <button
           disabled={true}
@@ -100,11 +98,10 @@ const ArenaActionButtons = ({
       )}
 
       {/* --- Fight Button --- */}
-      {/* Render Fight button only if conditions are met AND Leave button is NOT shown */}
       {!showLeaveButton && shouldShowFightButton && (
         <button
           onClick={onFight}
-          disabled={!canFight} // Re-check just in case
+          disabled={!canFight}
           className={clsx(
             "px-8 py-4 text-xl font-bold rounded-lg shadow-lg transition-all duration-200 ease-in-out",
             "flex items-center gap-2",

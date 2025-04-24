@@ -14,7 +14,6 @@ const MainNav = () => {
     logout();
   };
 
-  // Funkcja pomocnicza do generowania klas dla linków nawigacyjnych
   const getNavLinkClasses = (path) => {
     const isActive = currentPath === path;
     return styles.navLink(isActive, theme);
@@ -54,7 +53,6 @@ const MainNav = () => {
         Ranking
       </Link>
 
-      {/* Dodany link do Edycji */}
       <Link
         to="/edit"
         className={getNavLinkClasses("/edit")}
@@ -91,7 +89,7 @@ const styles = {
     clsx(
       styles.buttonBase,
       isActive ? styles.activeNavLinkStyle : styles.inactiveNavLink,
-      !isActive && styles.buttonOutline(theme), // Dodaj ring tylko dla nieaktywnych
+      !isActive && styles.buttonOutline(theme),
     ),
 
   logout: (theme) =>

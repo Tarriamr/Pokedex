@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import clsx from "clsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import usePokemonList from "../../hooks/usePokemonList.jsx";
@@ -28,10 +28,9 @@ const FavouritesPage = () => {
     if (!allPokemon) return [];
     return allPokemon
       .filter((pokemon) => favoriteIds.has(String(pokemon.id)))
-      .sort((a, b) => a.id - b.id); // Sort by ID numerically
+      .sort((a, b) => a.id - b.id);
   }, [allPokemon, favoriteIds]);
 
-  // Destructure only the needed values from usePagination
   const {
     currentPage,
     totalPages,
@@ -83,38 +82,18 @@ const FavouritesPage = () => {
           <button
             onClick={goToPreviousPage}
             disabled={currentPage === 1}
-            className={clsx(
-              "p-2 rounded-full shadow-md transition-all duration-150 ease-in-out",
-              "outline-none focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50",
-              "bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark",
-              "dark:bg-pokemon-yellow dark:hover:bg-pokemon-yellow-dark dark:text-pokemon-blue-dark",
-              "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-pokemon-gray-medium disabled:text-pokemon-gray-dark",
-              "active:scale-95 active:brightness-90",
-            )}
+            className={styles.paginationButton}
             aria-label="Poprzednia strona"
           >
             <ChevronLeftIcon className="h-6 w-6" />
           </button>
-          <span
-            className={clsx(
-              "text-lg font-bold transition-colors duration-300 ease-in-out",
-              "text-pokemon-gray-darker dark:text-pokemon-gray-light",
-              "min-w-[5ch] text-center",
-            )}
-          >
+          <span className={styles.paginationPages}>
             {currentPage}&nbsp;/&nbsp;{totalPages}
           </span>
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
-            className={clsx(
-              "p-2 rounded-full shadow-md transition-all duration-150 ease-in-out",
-              "outline-none focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50",
-              "bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark",
-              "dark:bg-pokemon-yellow dark:hover:bg-pokemon-yellow-dark dark:text-pokemon-blue-dark",
-              "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-pokemon-gray-medium disabled:text-pokemon-gray-dark",
-              "active:scale-95 active:brightness-90",
-            )}
+            className={styles.paginationButton}
             aria-label="Następna strona"
           >
             <ChevronRightIcon className="h-6 w-6" />
@@ -133,3 +112,18 @@ const FavouritesPage = () => {
 };
 
 export default FavouritesPage;
+
+const styles = {
+  paginationButton: clsx(
+    "p-2 rounded-full shadow-md transition-all duration-150 ease-in-out",
+    "outline-none focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50",
+    "bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark",
+    "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-pokemon-gray-medium disabled:text-pokemon-gray-dark",
+    "active:scale-95 active:brightness-90",
+  ),
+  paginationPages: clsx(
+    "text-lg font-bold transition-colors duration-300 ease-in-out",
+    "text-pokemon-gray-darker dark:text-pokemon-gray-light",
+    "min-w-[5ch] text-center",
+  ),
+};

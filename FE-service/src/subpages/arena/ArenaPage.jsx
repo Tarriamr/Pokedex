@@ -1,9 +1,9 @@
 import React, {
-  useState,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
-  useCallback,
+  useState,
 } from "react";
 import clsx from "clsx";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -12,7 +12,6 @@ import { useSnackbar } from "notistack";
 import { updateUserArena } from "../../services/api/pokemon.js";
 import { useArenaData } from "../../hooks/useArenaData.js";
 import { usePokemonFight } from "../../hooks/usePokemonFight.js";
-
 import ArenaBackground from "../../components/Arena/ArenaBackground.jsx";
 import ArenaStatusDisplay from "../../components/Arena/ArenaStatusDisplay.jsx";
 import ArenaActionButtons from "../../components/Arena/ArenaActionButtons.jsx";
@@ -21,11 +20,10 @@ import { capitalizeWords } from "../../utils/stringUtils.js";
 
 const FIGHT_RESULT_DELAY = 1000;
 
-// Component to render the fight status message (moved from ArenaStatusDisplay)
 const FightStatusMessage = ({ displayFightingState, fightResultMessage }) => {
   let message = null;
   let messageClass =
-    "text-center text-2xl font-bold text-white dark:text-gray-100 text-shadow-md my-4 px-4 py-2 bg-black bg-opacity-60 dark:bg-opacity-75 rounded-lg h-16 flex items-center justify-center"; // Added fixed height and flex centering
+    "text-center text-2xl font-bold text-white dark:text-gray-100 text-shadow-md my-4 px-4 py-2 bg-black bg-opacity-60 dark:bg-opacity-75 rounded-lg h-16 flex items-center justify-center";
 
   if (fightResultMessage) {
     message = fightResultMessage;
@@ -34,27 +32,23 @@ const FightStatusMessage = ({ displayFightingState, fightResultMessage }) => {
     messageClass = clsx(messageClass, "animate-pulse");
   }
 
-  // Render only if there is a message
   return message ? (
     <div className={messageClass}>{message}</div>
   ) : (
     <div className="h-16"></div>
-  ); // Render placeholder div with same height
+  );
 };
 
 const ArenaPage = () => {
   const { currentUser } = useAuth();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-
-  // --- State Management --- //
   const [showResultDelayed, setShowResultDelayed] = useState(false);
   const [isFightInProgress, setIsFightInProgress] = useState(false);
   const fightTimerRef = useRef(null);
   const pokemon1PreFightDataRef = useRef(null);
   const pokemon2PreFightDataRef = useRef(null);
 
-  // --- Data Fetching --- //
   const {
     pokemon1,
     pokemon2,
@@ -64,7 +58,6 @@ const ArenaPage = () => {
     arenaPokemonIds,
   } = useArenaData();
 
-  // --- Fight Logic --- //
   const {
     performFight,
     fightResult,
@@ -72,7 +65,6 @@ const ArenaPage = () => {
     resetFightResult,
   } = usePokemonFight(pokemon1, pokemon2);
 
-  // --- Mutations --- //
   const leaveArenaMutation = useMutation({
     mutationFn: () => {
       if (!currentUser) throw new Error("Użytkownik nie jest zalogowany.");
@@ -116,7 +108,6 @@ const ArenaPage = () => {
     },
   });
 
-  // --- Helper Functions --- //
   const resetFightState = useCallback(() => {
     clearTimeout(fightTimerRef.current);
     setIsFightInProgress(false);
@@ -126,7 +117,6 @@ const ArenaPage = () => {
     pokemon2PreFightDataRef.current = null;
   }, [resetFightResult]);
 
-  // --- Event Handlers --- //
   const handlePerformFight = useCallback(() => {
     if (isFightInProgress || isMutatingStats || !pokemon1 || !pokemon2) return;
     pokemon1PreFightDataRef.current = pokemon1;
@@ -156,7 +146,6 @@ const ArenaPage = () => {
     [removePokemonMutation, isFightInProgress, isMutatingStats],
   );
 
-  // --- Effects --- //
   useEffect(() => {
     if (
       !isMutatingStats &&
@@ -173,7 +162,6 @@ const ArenaPage = () => {
     return () => clearTimeout(fightTimerRef.current);
   }, [isMutatingStats, fightResult, isFightInProgress, showResultDelayed]);
 
-  // --- Derived State for UI --- //
   const displayFightingState = isFightInProgress && !showResultDelayed;
   const displayResultState = !!fightResult && showResultDelayed;
   const canFight = useMemo(
@@ -199,7 +187,7 @@ const ArenaPage = () => {
 
   const fightResultMessage = useMemo(() => {
     if (!displayResultState) return null;
-    if (!fightResult) return null; // Added null check for fightResult
+    if (!fightResult) return null;
     if (fightResult.draw) return "Walka zakończyła się remisem!";
     if (fightResult.winner && fightResult.loser) {
       const winnerData =
@@ -224,13 +212,11 @@ const ArenaPage = () => {
     ? pokemon2PreFightDataRef.current
     : pokemon2;
 
-  // --- Render --- //
   return (
     <ArenaBackground>
       <ArenaStatusDisplay
         isLoading={isLoadingData}
         errorMessage={errorMessage}
-        // Removed props related to fight message
       />
       {!isLoadingData && !hasLoadingError && (
         <div className="w-full max-w-5xl mx-auto flex flex-col items-center transition-opacity duration-500 ease-in-out opacity-100">
@@ -247,7 +233,6 @@ const ArenaPage = () => {
             onRemovePokemon={handleRemovePokemon}
           />
 
-          {/* Render the Fight Status Message here, below slots */}
           <FightStatusMessage
             displayFightingState={displayFightingState}
             fightResultMessage={fightResultMessage}

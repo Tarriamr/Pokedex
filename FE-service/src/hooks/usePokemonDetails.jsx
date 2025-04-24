@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { fetchPokemonDetails } from "../services/api/pokemon";
 import { useAuth } from "../context/AuthContext";
-// Import the shared combiner function
 import { combinePokemonData } from "../utils/pokemonUtils.js";
 
 const usePokemonDetails = (pokemonId) => {

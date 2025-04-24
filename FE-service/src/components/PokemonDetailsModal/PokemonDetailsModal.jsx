@@ -1,17 +1,13 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
-
-// Import BaseModal and other necessary components/hooks
 import BaseModal from "../../shared/BaseModal";
 import usePokemonDetails from "../../hooks/usePokemonDetails.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useFavoriteManagement } from "../../hooks/useFavoriteManagement.js";
 import { useArenaManagement } from "../../hooks/useArenaManagement.js";
 import ModalActionButtons from "./ModalActionButtons.jsx";
-import PokemonModalHeader from "./PokemonModalHeader.jsx"; // Keep original header
+import PokemonModalHeader from "./PokemonModalHeader.jsx";
 import PokemonModalBody from "./PokemonModalBody.jsx";
-import { getPokemonImageUrl } from "../../services/api/pokemon";
-import { capitalizeWords } from "../../utils/stringUtils";
 
 const PokemonDetailsModal = ({ pokemonId, onClose }) => {
   const pokemonIdStr = useMemo(
@@ -33,9 +29,8 @@ const PokemonDetailsModal = ({ pokemonId, onClose }) => {
 
   // --- Prepare props for BaseModal ---
 
-  // Prepare headerActions JSX conditionally
   const headerActionsContent = useMemo(() => {
-    if (!isLoggedIn || !pokemonDetails) return null; // Only show if logged in and details are loaded
+    if (!isLoggedIn || !pokemonDetails) return null;
     return (
       <ModalActionButtons
         isFavorite={isFavorite}
@@ -45,12 +40,11 @@ const PokemonDetailsModal = ({ pokemonId, onClose }) => {
         toggleArena={toggleArena}
         isUpdatingFavorite={isUpdatingFavorite}
         isUpdatingArena={isUpdatingArena}
-        // No absolute positioning needed here, BaseModal handles placement
       />
     );
   }, [
     isLoggedIn,
-    pokemonDetails, // Ensure buttons appear only after details load
+    pokemonDetails,
     isFavorite,
     isOnArena,
     canAddToArena,
@@ -60,7 +54,6 @@ const PokemonDetailsModal = ({ pokemonId, onClose }) => {
     isUpdatingArena,
   ]);
 
-  // Render main content (header + body) for the modal children
   const renderModalContent = () => {
     if (isLoadingDetails) {
       return (
@@ -81,9 +74,7 @@ const PokemonDetailsModal = ({ pokemonId, onClose }) => {
       );
     }
 
-    // Successfully loaded data
     return (
-      // Action buttons are now passed as headerActions, not rendered here
       <>
         <PokemonModalHeader pokemonDetails={pokemonDetails} />
         <PokemonModalBody pokemonDetails={pokemonDetails} />
@@ -95,8 +86,7 @@ const PokemonDetailsModal = ({ pokemonId, onClose }) => {
   return (
     <BaseModal
       onClose={onClose}
-      // No title or imageUrl needed - handled by PokemonModalHeader inside children
-      headerActions={headerActionsContent} // Pass the action buttons here
+      headerActions={headerActionsContent}
       maxWidth="max-w-lg"
     >
       {renderModalContent()}

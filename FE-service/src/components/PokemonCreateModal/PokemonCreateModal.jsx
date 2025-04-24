@@ -6,7 +6,6 @@ import * as z from "zod";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
-
 import BaseModal from "../../shared/BaseModal";
 import FormInput from "../../shared/FormInput";
 import {
@@ -17,8 +16,8 @@ import {
 import apiClient from "../../services/api/apiClient";
 import { POKEMON_API_LIMIT } from "../../config/constants";
 import { getPokemonImageUrl } from "../../services/api/pokemon";
-import usePokemonDetails from "../../hooks/usePokemonDetails.jsx"; // Import hook for details
-import TypeBadge from "../../components/PokemonDetailsModal/TypeBadge"; // Import TypeBadge
+import usePokemonDetails from "../../hooks/usePokemonDetails.jsx";
+import TypeBadge from "../../components/PokemonDetailsModal/TypeBadge";
 
 const createPokemonSchema = z.object({
   name: z
@@ -83,7 +82,7 @@ const GraphicsSelector = ({
   const imageContainerSize = "w-48 h-48";
   const imageSize = "w-44 h-44";
   const skeletonSize = "w-48 h-48";
-  const typeSectionHeight = "h-7"; // Changed min-h-5 to h-7
+  const typeSectionHeight = "h-7";
 
   return (
     <div className="text-center mb-4">
@@ -162,7 +161,6 @@ const GraphicsSelector = ({
         </button>
       </div>
 
-      {/* Type/Warning Section - Use fixed height h-7 */}
       <div
         className={clsx(
           "mt-2 flex justify-center items-center",

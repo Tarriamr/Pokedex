@@ -1,8 +1,5 @@
 import apiClient from "./apiClient";
-// Import the shared helper function
 import { _sanitizeUserData } from "./apiUtils.js";
-
-// Helper function removed from here
 
 // --- Authentication --- //
 
@@ -34,14 +31,14 @@ export const registerUser = async ({ name, email, password }) => {
       `/users?email=${encodeURIComponent(email)}`,
     );
     if (checkResponse.data.length > 0) {
-      throw new Error("Email already exists"); // Specific error for the form
+      throw new Error("Email already exists");
     }
     const newUser = {
       name,
       email,
       password, // WARNING: Storing plain text password - ONLY for demo/mock API!
       preferences: {
-        theme: "dark", // Default theme
+        theme: "dark",
       },
       favoritePokemonIds: [],
       arenaPokemonIds: [],

@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-// Corrected import path for AuthContext
 import { useAuth } from "../context/AuthContext.jsx";
 import { useQuery } from "@tanstack/react-query";
 import { getUserData } from "../services/api/auth.js";
@@ -80,7 +79,6 @@ export const useArenaData = () => {
   const errorMessage = useMemo(() => {
     if (!isError) return null;
     if (isUserError) return "Błąd ładowania danych użytkownika.";
-    // Provide more context if possible for details error
     if (isErrorDetails)
       return `Błąd ładowania danych Pokémona/ów z API (${error?.message || "nieznany błąd API"}).`;
     return "Wystąpił nieznany błąd ładowania.";
@@ -92,7 +90,7 @@ export const useArenaData = () => {
     isLoading,
     isError,
     errorMessage,
-    arenaPokemonIds, // Keep returning this, needed for fight conditions
-    pokemonStats, // Keep returning this, might be needed
+    arenaPokemonIds,
+    pokemonStats,
   };
 };

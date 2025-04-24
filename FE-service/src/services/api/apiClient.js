@@ -10,6 +10,4 @@ const apiClient = axios.create({
   },
 });
 
-// You can add interceptors here if needed later (e.g., for auth tokens)
-
 export default apiClient;

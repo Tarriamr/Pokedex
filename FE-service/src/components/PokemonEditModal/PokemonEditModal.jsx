@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import clsx from "clsx";
-import BaseModal from "../../shared/BaseModal"; // Import BaseModal
+import BaseModal from "../../shared/BaseModal";
 import FormInput from "../../shared/FormInput";
 import { capitalizeWords } from "../../utils/stringUtils";
 import { getPokemonImageUrl } from "../../services/api/pokemon";
@@ -78,16 +78,14 @@ const PokemonEditModal = ({ pokemon, onClose, onSave }) => {
   return (
     <BaseModal
       onClose={onClose}
-      title={title} // Title remains in the header
+      title={title}
       footerContent={footer}
       maxWidth="max-w-md"
     >
-      {/* Pokemon Image added here, inside children */}
       <div className="flex justify-center mb-4">
         <img
           src={imageUrl}
           alt={capitalizeWords(pokemon.name)}
-          // Changed size to h-48 w-48 (192px)
           className="h-48 w-48 object-contain"
           onError={(e) => {
             e.target.onerror = null;
@@ -96,7 +94,6 @@ const PokemonEditModal = ({ pokemon, onClose, onSave }) => {
         />
       </div>
 
-      {/* Form as the rest of the children */}
       <form id="edit-pokemon-form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-4">
           <FormInput

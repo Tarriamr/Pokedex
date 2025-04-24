@@ -18,8 +18,6 @@ export const useFavoriteManagement = (pokemonId) => {
       updateUserFavorites(userId, updatedFavorites),
     onSuccess: (updatedUserData) => {
       queryClient.setQueryData(["user", currentUser?.id], updatedUserData);
-      // Removed success notification
-      // enqueueSnackbar('Lista ulubionych zaktualizowana!', { variant: 'success' });
     },
     onError: (error) => {
       enqueueSnackbar(`Błąd aktualizacji ulubionych: ${error.message}`, {

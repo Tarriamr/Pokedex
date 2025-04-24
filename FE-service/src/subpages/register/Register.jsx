@@ -1,5 +1,5 @@
-import React, { useEffect } from "react"; // Removed useState
-import PropTypes from "prop-types"; // Keep PropTypes for component definition
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,7 +8,6 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import FormInput from "../../shared/FormInput";
 import clsx from "clsx";
 
-// Zod schema remains the same
 const registerSchema = z
   .object({
     name: z.string().min(3, { message: "Imię musi mieć co najmniej 3 znaki" }),
@@ -38,9 +37,7 @@ const registerSchema = z
   });
 
 const Register = ({ onClose, onSwitchToLogin }) => {
-  // Removed clearError from destructuring
   const { register: registerUser, isLoggedIn, isLoading } = useAuth();
-  // Removed registrationSuccess state
 
   const {
     register,
@@ -68,14 +65,12 @@ const Register = ({ onClose, onSwitchToLogin }) => {
     }
   }, [isLoggedIn, onClose]);
 
-  // Removed the useEffect block that called clearError()
-
   const onSubmit = async (data) => {
     const { confirmPassword, ...userData } = data;
     try {
       await registerUser(userData);
       // Assume success, show Notistack from AuthContext, then switch to Login
-      onSwitchToLogin(); // Automatically switch to login view after successful registration
+      onSwitchToLogin();
     } catch (err) {
       // Handle specific "email exists" error locally
       if (
@@ -129,8 +124,6 @@ const Register = ({ onClose, onSwitchToLogin }) => {
           Rejestracja
         </h1>
 
-        {/* Removed Auth Error display and Success message display */}
-
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormInput
             label="Imię"
@@ -146,7 +139,7 @@ const Register = ({ onClose, onSwitchToLogin }) => {
             name="email"
             type="email"
             register={register}
-            error={errors.email} // Will show "email exists" error if set
+            error={errors.email}
             placeholder="ty@pokemon.com"
             autoComplete="email"
             required

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import clsx from "clsx";
 import usePokemonList from "../../hooks/usePokemonList.jsx";
 import { usePagination } from "../../hooks/usePagination.js";
@@ -20,11 +20,10 @@ const PokemonList = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPokemonId, setSelectedPokemonId] = useState(null);
-  // isModalOpen state was implicitly managed by selectedPokemonId, removed it.
 
   const filteredPokemon = useMemo(() => {
     if (!allPokemon) return [];
-    if (!searchQuery) return allPokemon; // Avoid filtering if query is empty
+    if (!searchQuery) return allPokemon;
     return allPokemon.filter((pokemon) =>
       pokemon.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
@@ -35,29 +34,25 @@ const PokemonList = () => {
     totalPages,
     goToNextPage,
     goToPreviousPage,
-    setCurrentPage, // Keep setCurrentPage for resetting on search
+    setCurrentPage,
     startIndex,
     endIndex,
   } = usePagination(filteredPokemon.length, POKEMONS_PER_PAGE);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1);
   };
 
   const handleCardClick = (id) => {
     setSelectedPokemonId(id);
-    // setIsModalOpen(true); // No longer needed
   };
 
   const closeModal = () => {
     setSelectedPokemonId(null);
-    // setIsModalOpen(false); // No longer needed
   };
 
-  // Get the slice of Pokemon for the current page
   const currentPokemonPage = useMemo(() => {
-    // Ensure filteredPokemon is an array before slicing
     if (!Array.isArray(filteredPokemon)) return [];
     return filteredPokemon.slice(startIndex, endIndex);
   }, [filteredPokemon, startIndex, endIndex]);
@@ -93,37 +88,19 @@ const PokemonList = () => {
         <div className="flex justify-center items-center mt-8 space-x-3">
           <button
             onClick={goToPreviousPage}
-            disabled={currentPage === 1} // Disable if on first page
-            className={clsx(
-              "p-2 rounded-full shadow-md transition-all duration-150 ease-in-out",
-              "outline-none focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50",
-              "bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark",
-              "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-pokemon-gray-medium disabled:text-pokemon-gray-dark",
-              "active:scale-95 active:brightness-90",
-            )}
+            disabled={currentPage === 1}
+            className={styles.paginationButton}
             aria-label="Poprzednia strona"
           >
             <ChevronLeftIcon className="h-6 w-6" />
           </button>
-          <span
-            className={clsx(
-              "text-lg font-bold transition-colors duration-300 ease-in-out",
-              "text-pokemon-gray-darker dark:text-pokemon-gray-light",
-              "min-w-[5ch] text-center",
-            )}
-          >
+          <span className={styles.paginationPages}>
             {currentPage}&nbsp;/&nbsp;{totalPages}
           </span>
           <button
             onClick={goToNextPage}
-            disabled={currentPage === totalPages} // Disable if on last page
-            className={clsx(
-              "p-2 rounded-full shadow-md transition-all duration-150 ease-in-out",
-              "outline-none focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50",
-              "bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark",
-              "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-pokemon-gray-medium disabled:text-pokemon-gray-dark",
-              "active:scale-95 active:brightness-90",
-            )}
+            disabled={currentPage === totalPages}
+            className={styles.paginationButton}
             aria-label="Następna strona"
           >
             <ChevronRightIcon className="h-6 w-6" />
@@ -131,7 +108,6 @@ const PokemonList = () => {
         </div>
       )}
 
-      {/* Modal is rendered conditionally based on selectedPokemonId */}
       {selectedPokemonId !== null && (
         <PokemonDetailsModal
           pokemonId={selectedPokemonId}
@@ -143,3 +119,18 @@ const PokemonList = () => {
 };
 
 export default PokemonList;
+
+const styles = {
+  paginationButton: clsx(
+    "p-2 rounded-full shadow-md transition-all duration-150 ease-in-out",
+    "outline-none focus:outline-none focus:ring-2 focus:ring-pokemon-yellow focus:ring-opacity-50",
+    "bg-pokemon-yellow hover:bg-pokemon-yellow-dark text-pokemon-blue-dark",
+    "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-pokemon-gray-medium disabled:text-pokemon-gray-dark",
+    "active:scale-95 active:brightness-90",
+  ),
+  paginationPages: clsx(
+    "text-lg font-bold transition-colors duration-300 ease-in-out",
+    "text-pokemon-gray-darker dark:text-pokemon-gray-light",
+    "min-w-[5ch] text-center",
+  ),
+};

@@ -5,9 +5,7 @@ import { HeartIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { Swords } from "lucide-react";
 
-// Komponent dla przycisków akcji w modalu (Ulubione, Arena)
-// Usunięto zewnętrzny div i klasy pozycjonowania.
-// Używa React.Fragment do zwrócenia przycisków jako rodzeństwa.
+// Component for buttons in Modal (Favorite, Arena)
 const ModalActionButtons = ({
   isFavorite,
   isOnArena,
@@ -19,7 +17,7 @@ const ModalActionButtons = ({
 }) => {
   return (
     <>
-      {/* Przycisk Ulubione */}
+      {/* Favorite button */}
       <button
         onClick={toggleFavorite}
         disabled={isUpdatingFavorite}
@@ -41,7 +39,7 @@ const ModalActionButtons = ({
         )}
       </button>
 
-      {/* Przycisk Arena */}
+      {/* Arena button */}
       <button
         onClick={toggleArena}
         disabled={isUpdatingArena || (!isOnArena && !canAddToArena)}

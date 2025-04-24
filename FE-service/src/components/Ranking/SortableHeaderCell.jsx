@@ -23,9 +23,7 @@ const SortableHeaderCell = ({
     <th
       scope="col"
       className={clsx(
-        // Zachowujemy padding, styl tekstu, cursor, transition itp.
         "px-3 py-3 text-xs font-medium text-pokemon-gray-dark dark:text-gray-300 uppercase tracking-wider cursor-pointer transition-colors hover:bg-pokemon-gray-medium/50 dark:hover:bg-pokemon-gray-dark",
-        // Usuwamy text-left, text-center będzie dodawane z zewnątrz
         className,
       )}
       onClick={handleClick}
@@ -33,11 +31,8 @@ const SortableHeaderCell = ({
         isActive ? (sortOrder === "asc" ? "ascending" : "descending") : "none"
       }
     >
-      {/* Zmieniono div: flex justify-between */}
       <div className="flex justify-between items-center">
-        {/* Span z tekstem: flex-grow text-center */}
         <span className="flex-grow text-center">{children}</span>
-        {/* Span z ikonami: flex-shrink-0 */}
         <span className="flex flex-col ml-1 flex-shrink-0">
           <ArrowUpIcon
             className={clsx(

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import PokemonCard from "../PokemonCard/PokemonCard";
 
-// Komponent do renderowania siatki kart Pokemonów
+// component for rendering pokeon cards grid
 const PokemonGrid = ({
   pokemons,
   onCardClick,
@@ -12,7 +12,6 @@ const PokemonGrid = ({
   loadingMessage,
   emptyMessage,
 }) => {
-  // Stan ładowania
   if (isLoading) {
     return (
       <div className="text-center p-10 text-xl text-pokemon-blue dark:text-pokemon-blue-light transition-colors duration-300 ease-in-out">
@@ -21,7 +20,6 @@ const PokemonGrid = ({
     );
   }
 
-  // Stan pusty (brak Pokemonów)
   if (!pokemons || pokemons.length === 0) {
     return (
       <p
@@ -35,12 +33,11 @@ const PokemonGrid = ({
     );
   }
 
-  // Renderowanie siatki
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-6">
       {pokemons.map((pokemon) => (
         <PokemonCard
-          key={pokemon.id} // Klucz dla elementu listy
+          key={pokemon.id}
           pokemon={pokemon}
           onClick={onCardClick}
           userStats={userStats}

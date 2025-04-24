@@ -19,8 +19,6 @@ export const useArenaManagement = (pokemonId) => {
       updateUserArena(userId, updatedArena),
     onSuccess: (updatedUserData) => {
       queryClient.setQueryData(["user", currentUser?.id], updatedUserData);
-      // Removed success notification
-      // enqueueSnackbar('Arena zaktualizowana!', { variant: 'success' });
       queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
     },
     onError: (error) => {
@@ -55,14 +53,9 @@ export const useArenaManagement = (pokemonId) => {
     let updatedArena;
 
     if (isOnArena) {
-      // Logic for removing from arena (if needed, currently toggle adds only)
-      // For now, assume toggle only adds, removal is handled elsewhere (ArenaPage)
       console.warn(
         "Attempted to toggle OFF arena from details modal, but only ADD is implemented here.",
       );
-      // If removal from here is needed, uncomment below:
-      // updatedArena = currentArenaIds.filter(id => id !== pokemonIdStr);
-      // mutation.mutate({ userId: currentUser.id, updatedArena });
       return;
     } else {
       if (isArenaFull) {
@@ -76,7 +69,6 @@ export const useArenaManagement = (pokemonId) => {
         updatedArena = [...currentArenaIds, pokemonIdStr];
         mutation.mutate({ userId: currentUser.id, updatedArena });
       }
-      // Removed else block as it was unreachable
     }
   };
 
@@ -84,7 +76,7 @@ export const useArenaManagement = (pokemonId) => {
     isOnArena,
     isArenaFull,
     canAddToArena,
-    toggleArena, // Expose the function to add to arena
+    toggleArena,
     isUpdatingArena: mutation.isPending,
   };
 };

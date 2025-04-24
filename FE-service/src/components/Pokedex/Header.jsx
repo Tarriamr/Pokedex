@@ -1,15 +1,15 @@
 import clsx from "clsx";
-import Logo from "./components/Logo/Logo.jsx";
+import Logo from "../Logo/Logo.jsx";
 import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/solid/index.js";
-import ThemeToggleButton from "./components/ThemeToggleButton/ThemeToggleButton.jsx";
-import MainNav from "./components/Navigation/MainNav.jsx";
-import AuthNav from "./components/Navigation/AuthNav.jsx";
+import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton.jsx";
+import MainNav from "../Navigation/MainNav.jsx";
+import AuthNav from "../Navigation/AuthNav.jsx";
 import React, { useState } from "react";
-import MobileMenu from "./components/Navigation/MobileMenu.jsx";
-import { useAuth } from "./context/AuthContext.jsx";
+import MobileMenu from "../Navigation/MobileMenu.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import Login from "./subpages/login/Login.jsx";
-import Register from "./subpages/register/Register.jsx";
+import Login from "../../subpages/login/Login.jsx";
+import Register from "../../subpages/register/Register.jsx";
 
 export function Header() {
   const {

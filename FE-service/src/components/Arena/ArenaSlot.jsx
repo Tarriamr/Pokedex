@@ -58,10 +58,9 @@ const ArenaSlot = ({
         "w-64 h-80 bg-black rounded-lg flex flex-col items-center p-4 relative border-2 transition-all duration-500 ease-in-out",
         "bg-opacity-60 dark:bg-opacity-70",
         "border-gray-600 dark:border-gray-400",
-        winnerShadowClass, // Apply dynamic shadow class
+        winnerShadowClass,
       )}
     >
-      {/* Remove Button - visible only when not fighting/showing results */}
       {!isFighting && !showResultDelayed && (
         <button
           onClick={onRemove} // Call the passed handler directly
@@ -86,7 +85,7 @@ const ArenaSlot = ({
         alt={name}
         className={clsx(
           "w-40 h-40 object-contain mt-4 mb-2 transition-all duration-500 ease-in-out",
-          imageFilterClass, // Apply dynamic filter class
+          imageFilterClass,
         )}
         onError={(e) => {
           e.target.onerror = null;
@@ -112,10 +111,10 @@ const ArenaSlot = ({
 
 ArenaSlot.propTypes = {
   combinedPokemonData: PropTypes.object,
-  fightResult: PropTypes.object, // Can be null
+  fightResult: PropTypes.object,
   isFighting: PropTypes.bool.isRequired,
   showResultDelayed: PropTypes.bool.isRequired,
-  onRemove: PropTypes.func.isRequired, // Callback when remove button is clicked
+  onRemove: PropTypes.func.isRequired,
 };
 
 export default ArenaSlot;

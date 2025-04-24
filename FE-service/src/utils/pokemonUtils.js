@@ -2,8 +2,6 @@ import { getPokemonImageUrl } from "../services/api/pokemon";
 // Import the shared helper function
 import { safeGetNumber } from "./numberUtils.js";
 
-// safeGetNumber function removed from here
-
 export const combinePokemonData = (baseDetails, userStat, pokemonId) => {
   const pokemonIdStr = String(pokemonId);
   const pokemonIdNum = parseInt(pokemonIdStr, 10);

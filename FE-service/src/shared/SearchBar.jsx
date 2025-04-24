@@ -1,13 +1,11 @@
 import React, { useState, useCallback } from "react";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const SearchBar = ({ onSearch }) => {
   const [searchText, setSearchText] = useState("");
 
-  // Use useCallback for stable function reference if passed down heavily,
-  // though not strictly necessary here.
   const handleInputChange = useCallback(
     (event) => {
       const newSearchText = event.target.value;
@@ -38,7 +36,7 @@ const SearchBar = ({ onSearch }) => {
         />
       </div>
       <input
-        type="search" // Use type="search" for better semantics and potential browser features (like clear button)
+        type="search"
         placeholder="Wyszukaj Pokemona..."
         className={clsx(
           "block w-full pl-10 pr-3 py-2",
@@ -56,7 +54,6 @@ const SearchBar = ({ onSearch }) => {
   );
 };
 
-// Add PropTypes definition
 SearchBar.propTypes = {
   onSearch: PropTypes.func.isRequired,
 };

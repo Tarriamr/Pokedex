@@ -1,7 +1,6 @@
 import axios from "axios";
 import apiClient from "./apiClient";
 import { MAX_ARENA_POKEMONS } from "../../config/constants";
-// Import the shared helper function
 import { _sanitizeUserData } from "./apiUtils.js";
 
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2";
@@ -12,8 +11,6 @@ export const getPokemonImageUrl = (id) => {
   if (!id) return "/src/assets/pokeball.svg";
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 };
-
-// _sanitizeUserData removed from here
 
 const _processPokemonData = (data) => {
   if (!data) return null;
@@ -32,10 +29,10 @@ const _processPokemonData = (data) => {
     name,
     types: processedTypes,
     stats: processedStats,
-    weight: weight / 10, // Convert hectograms to kilograms
-    height: height / 10, // Convert decimetres to meters
+    weight: weight / 10,
+    height: height / 10,
     base_experience,
-    abilities: abilities || [], // Ensure abilities is an array
+    abilities: abilities || [],
   };
 };
 
@@ -109,7 +106,7 @@ export const updateUserPokemonStats = async (
   if (Object.keys(cleanStatsToUpdate).length === 0) {
     try {
       const currentData = await apiClient.get(`/users/${userId}`);
-      return _sanitizeUserData(currentData.data); // Use imported helper
+      return _sanitizeUserData(currentData.data);
     } catch (fetchError) {
       console.error(
         `[updateUserPokemonStats] Error fetching user data after skipping update for Pokemon ${pokemonIdStr}:`,
@@ -141,7 +138,7 @@ export const updateUserPokemonStats = async (
     const patchUrl = `/users/${userId}`;
     const response = await apiClient.patch(patchUrl, payload);
 
-    return _sanitizeUserData(response.data); // Use imported helper
+    return _sanitizeUserData(response.data);
   } catch (error) {
     console.error(
       `Error updating stats for Pokemon ${pokemonId} (User ${userId}) via PATCH ${`/users/${userId}`}:`,
@@ -171,7 +168,7 @@ export const updateUserArena = async (userId, arenaPokemonIds) => {
     const response = await apiClient.patch(`/users/${userId}`, {
       arenaPokemonIds: stringArenaPokemonIds,
     });
-    return _sanitizeUserData(response.data); // Use imported helper
+    return _sanitizeUserData(response.data);
   } catch (error) {
     throw new Error(
       error?.message || "Nie udało się zaktualizować Pokemonów na Arenie.",
