@@ -60,9 +60,9 @@
           "modified_base_experience": 152
         },
         "6": {
-          "wins": 9,
+          "wins": 10,
           "losses": 1,
-          "modified_base_experience": 366,
+          "modified_base_experience": 376,
           "height": 1.8,
           "weight": 93,
           "isCustom": false
@@ -164,7 +164,7 @@
         },
         "95": {
           "wins": 6,
-          "losses": 1,
+          "losses": 2,
           "modified_base_experience": 137
         },
         "97": {

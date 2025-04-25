@@ -234,7 +234,7 @@ const EditPage = () => {
                 </th>
                 <th
                   scope="col"
-                  className="px-4 py-3 text-left text-xs font-medium text-pokemon-gray-dark dark:text-gray-300 uppercase tracking-wider"
+                  className="px-4 py-3 text-center text-xs font-medium text-pokemon-gray-dark dark:text-gray-300 uppercase tracking-wider"
                 >
                   Pokémon
                 </th>
@@ -255,8 +255,8 @@ const EditPage = () => {
                   <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-pokemon-gray-dark dark:text-gray-400 text-right align-middle">
                     {index + 1}
                   </td>
-                  <td className="px-4 py-2 whitespace-nowrap text-sm font-semibold text-pokemon-gray-darker dark:text-gray-200 capitalize text-left align-middle">
-                    <div className="flex items-center gap-3">
+                  <td className="px-16 py-2 whitespace-nowrap text-sm font-semibold text-pokemon-gray-darker dark:text-gray-200 capitalize text-left align-middle">
+                    <div className="flex items-center gap-10">
                       <img
                         src={getPokemonImageUrl(pokemon.id)}
                         alt={capitalizeWords(pokemon.name)}
