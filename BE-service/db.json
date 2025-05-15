@@ -1,0 +1,321 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Ash Ketchum",
+      "email": "ash@pokemon.com",
+      "password": "pikachu",
+      "preferences": {
+        "theme": "light"
+      },
+      "favoritePokemonIds": [
+        "25",
+        "6",
+        "9",
+        "106",
+        "149",
+        "5",
+        "78",
+        "14",
+        "11",
+        "3",
+        "59",
+        "51",
+        "82",
+        "76",
+        "95",
+        "208",
+        "238",
+        "234",
+        "151",
+        "248",
+        "7"
+      ],
+      "arenaPokemonIds": [],
+      "pokemonStats": {
+        "1": {
+          "height": 1,
+          "losses": 3,
+          "isCustom": false,
+          "weight": 6.9
+        },
+        "2": {
+          "wins": 3,
+          "losses": 0,
+          "modified_base_experience": 172
+        },
+        "3": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 273
+        },
+        "4": {
+          "wins": 1,
+          "losses": 4,
+          "modified_base_experience": 72
+        },
+        "5": {
+          "wins": 1,
+          "losses": 1,
+          "modified_base_experience": 152
+        },
+        "6": {
+          "wins": 10,
+          "losses": 1,
+          "modified_base_experience": 376,
+          "height": 1.8,
+          "weight": 93,
+          "isCustom": false
+        },
+        "7": {
+          "wins": 2,
+          "losses": 13,
+          "modified_base_experience": 83
+        },
+        "8": {
+          "wins": 0,
+          "losses": 3,
+          "modified_base_experience": 142
+        },
+        "9": {
+          "wins": 2,
+          "losses": 12,
+          "modified_base_experience": 285
+        },
+        "10": {
+          "losses": 2
+        },
+        "11": {
+          "wins": 1,
+          "losses": 1,
+          "modified_base_experience": 180,
+          "height": 1.6,
+          "weight": 10.8,
+          "isCustom": false
+        },
+        "12": {
+          "wins": 3,
+          "losses": 0,
+          "modified_base_experience": 228
+        },
+        "14": {
+          "wins": 1,
+          "losses": 1,
+          "modified_base_experience": 82
+        },
+        "18": {
+          "wins": 0,
+          "losses": 1,
+          "modified_base_experience": 216
+        },
+        "25": {
+          "wins": 10,
+          "losses": 4,
+          "modified_base_experience": 212
+        },
+        "51": {
+          "losses": 1,
+          "wins": 1,
+          "modified_base_experience": 159
+        },
+        "53": {
+          "wins": 0,
+          "losses": 2
+        },
+        "57": {
+          "losses": 4
+        },
+        "59": {
+          "wins": 5,
+          "losses": 0,
+          "modified_base_experience": 244
+        },
+        "71": {
+          "wins": 1,
+          "losses": 1,
+          "modified_base_experience": 231
+        },
+        "73": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 190
+        },
+        "76": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 233
+        },
+        "78": {
+          "wins": 1,
+          "losses": 0,
+          "modified_base_experience": 195
+        },
+        "82": {
+          "wins": 2,
+          "losses": 0,
+          "modified_base_experience": 203
+        },
+        "89": {
+          "wins": 0,
+          "losses": 6
+        },
+        "94": {
+          "losses": 1
+        },
+        "95": {
+          "wins": 6,
+          "losses": 2,
+          "modified_base_experience": 137
+        },
+        "97": {
+          "wins": 1,
+          "modified_base_experience": 179
+        },
+        "101": {
+          "losses": 2
+        },
+        "103": {
+          "wins": 2,
+          "modified_base_experience": 206
+        },
+        "106": {
+          "wins": 2,
+          "losses": 4,
+          "modified_base_experience": 179
+        },
+        "127": {
+          "losses": 4
+        },
+        "131": {
+          "wins": 5,
+          "losses": 0,
+          "modified_base_experience": 237
+        },
+        "143": {
+          "wins": 1,
+          "modified_base_experience": 199
+        },
+        "149": {
+          "wins": 5,
+          "losses": 0,
+          "modified_base_experience": 350
+        },
+        "151": {
+          "name": "Kociek",
+          "height": 1.2,
+          "weight": 35,
+          "base_experience": 274,
+          "isCustom": true,
+          "wins": 1,
+          "losses": 0
+        },
+        "152": {
+          "name": "Liść",
+          "height": 0.75,
+          "weight": 3,
+          "base_experience": 120,
+          "isCustom": true,
+          "wins": 0,
+          "losses": 0
+        },
+        "155": {
+          "name": "Ostry Kebab",
+          "height": 0.4,
+          "weight": 7,
+          "base_experience": 444,
+          "isCustom": true,
+          "wins": 0,
+          "losses": 0
+        },
+        "158": {
+          "name": "Croksy",
+          "height": 0.8,
+          "weight": 4,
+          "base_experience": 100,
+          "isCustom": true,
+          "wins": 0,
+          "losses": 0
+        },
+        "161": {
+          "name": "Julian",
+          "height": 0.6,
+          "weight": 4,
+          "base_experience": 150,
+          "isCustom": true,
+          "wins": 0,
+          "losses": 0
+        },
+        "208": {
+          "name": "Pok208",
+          "height": 8.8,
+          "weight": 210,
+          "base_experience": 137,
+          "isCustom": true,
+          "losses": 2,
+          "wins": 3
+        },
+        "217": {
+          "name": "Miś",
+          "isCustom": true,
+          "height": 2.4,
+          "weight": 160,
+          "base_experience": 200,
+          "wins": 0,
+          "losses": 4
+        },
+        "234": {
+          "name": "Rudolf",
+          "height": 1.8,
+          "weight": 270,
+          "base_experience": 189,
+          "isCustom": true,
+          "wins": 5,
+          "losses": 0
+        },
+        "238": {
+          "name": "Ci łała",
+          "height": 0.6,
+          "weight": 6.6,
+          "base_experience": 478,
+          "isCustom": true,
+          "wins": 1,
+          "losses": 1
+        },
+        "248": {
+          "name": "Godzilla",
+          "isCustom": true,
+          "height": 30,
+          "weight": 5348,
+          "base_experience": 80,
+          "wins": 7,
+          "losses": 1
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "Misty Waterflower",
+      "email": "misty@pokemon.com",
+      "password": "staryu",
+      "preferences": {
+        "theme": "dark"
+      },
+      "favoritePokemonIds": [
+        "13",
+        "14"
+      ],
+      "arenaPokemonIds": [],
+      "pokemonStats": {
+        "245": {
+          "name": "Koń Wodny",
+          "isCustom": true,
+          "height": 0.8,
+          "weight": 40,
+          "base_experience": 150,
+          "wins": 0,
+          "losses": 0
+        }
+      }
+    }
+  ]
+}
